@@ -1,0 +1,127 @@
+세션 스프린트 중 어떻게보면 가장 먼저 설정해줘야 했던것이 server-session 디렉토리의 index.js에 있는
+app.use(cors()) 부분이었다.
+
+위 cors부분을 설정해주려면 우선 cors가 뭔지 정확히 알아야하겠지?
+
+교차 출처 리소스 공유 (CORS) (Cross-Origin Resource Sharing)
+
+-> 이에 대한 응답으로 서버는 Access-Control-Allow-Origin 헤더를 다시 보냅니다.
+
+-> cors란, 추가 HTTP 헤더를 사용하여, 한 출처에서 실행 중인 웹 애플리케이션이 다른 출처의 선택한 자원에 접근할 수 있는 권한을 부여하도록 브라우저에 알려주는 체제이다. 웹 애플리케이션은 리소스가 자신의 출처(도메인, 프로토콜, 포트)와 다를 때 교차 출처 HTTP 요청을 실행한다. 교차 출처 요청의 예시로 https://domain-a.com의 프론트 엔드 JavaScript 코드가 XMLHttpRequest를 사용하여 https://domain-b.com/data.json을 요청하는 경우 보안 상의 이유로, 브라우저는 스크립트에서 시작한 교차 출처 HTTP 요청을 제한하게 되고, (XMLHttpRequest와 Fetch API는 동일 출처 정책을 따른다) 즉, 이 API를 사용하는 웹 애플리케이션은 자신의 출처와 동일한 리소스만 불러올 수 있으며, 다른 출처의 리소스를 불러오려면 그 출처에서 올바른 CORS 헤더를 포함한 응답을 반환해야 한다는것이다.
+
+정리해서 말하면 이렇다.
+다른 도메인의 데이터 정보를 가져오는 것은 모두 다 가능하다. 그러나 <script></script>로 감싸여진 script에서 생성된 Cross-site HTTP Request는 Same-origin policy를 적용받아 Cross-site HTTP Request가 제한된다. 즉, 동일 출처로 요청을 보내는 것(Same-origin requests)은 항상 허용되지만 다른 출처로의 요청(Cross-origin requests)은 보안상의 이유로 제한된다는 뜻이다. 
+그러나 AJAX가 널리 퍼지면서 <script></script> 안의 스크립트에서 생겨난 XMLHTTPRequest에서도 Cross-site HTTP Requests의 필요성이 매우 커졌고, 그에대한 해결책으로 W3C에서는 CORS라는 이름의 새로운 표준을 내놓게되었다.
+
+기존에는 보안상의 이유로 XMLHttpRequest가 자신과 동일한 도메인으로만 HTTP 요청을 보내도록 제한하였으나 웹 개발에서 다른 도메인으로의 요청이 꼭 필요하게 되었기때문에 그래서 XMLHttpRequest가 cross-domain을 요청할 수 있도록 CORS라는 것이 만들어진것이다.
+
+
+자 그래서 그럼 위 설명했던 app.use(cors()) 부분을 어떻게 작성해야할까? cors옵션을 어떻게 설정해줘야 할까?
+
+우선 스프린트에 작성했던것을 예시로 들자면 아래와 같다.
+
+app.use(cors({
+  origin : 'https://localhost:3000',
+  methods : ['GET', 'POST', 'OPTIONS'],
+  credentials : true
+}));
+
+위에서처럼 cors() 안에 객체형식으로 옵션을 설정해주는데 공실 문서를 보면 여러가지 옵션 설정에 대한 자세한 설명이 나와있다.
+⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
+
+Configuration Options
+
+origin: Configures the Access-Control-Allow-Origin CORS header. 
+    Possible values:
+        Boolean - set origin to true to reflect the request origin, as defined by req.header('Origin'), or set it to false to disable CORS.
+        String - set origin to a specific origin. For example if you set it to "http://example.com" only requests from “http://example.com” will be allowed.
+        RegExp - set origin to a regular expression pattern which will be used to test the request origin. If it’s a match, the request origin will be reflected. For example the pattern /example\.com$/ will reflect any request that is coming from an origin ending with “example.com”.
+        Array - set origin to an array of valid origins. Each origin can be a String or a RegExp. For example ["http://example1.com", /\.example2\.com$/] will accept any request from “http://example1.com” or from a subdomain of “example2.com”.
+        Function - set origin to a function implementing some custom logic. The function takes the request origin as the first parameter and a callback (called as callback(err, origin), where origin is a non-function value of the origin option) as the second.
+
+methods: Configures the Access-Control-Allow-Methods CORS header. Expects a comma-delimited string (ex: ‘GET,PUT,POST’) or an array (ex: ['GET', 'PUT', 'POST']).
+
+allowedHeaders: Configures the Access-Control-Allow-Headers CORS header. Expects a comma-delimited string (ex: ‘Content-Type,Authorization’) or an array (ex: ['Content-Type', 'Authorization']). If not specified, defaults to reflecting the headers specified in the request’s Access-Control-Request-Headers header.
+
+exposedHeaders: Configures the Access-Control-Expose-Headers CORS header. Expects a comma-delimited string (ex: ‘Content-Range,X-Content-Range’) or an array (ex: ['Content-Range', 'X-Content-Range']). If not specified, no custom headers are exposed.
+
+credentials: Configures the Access-Control-Allow-Credentials CORS header. Set to true to pass the header, otherwise it is omitted.
+
+maxAge: Configures the Access-Control-Max-Age CORS header. Set to an integer to pass the header, otherwise it is omitted.
+
+preflightContinue: Pass the CORS preflight response to the next handler.
+
+optionsSuccessStatus: Provides a status code to use for successful OPTIONS requests, since some legacy browsers (IE11, various SmartTVs) choke on 204.
+
+위 공식 문서의 내용을 한번 쭉 읽어보면 좋다.
+
+스프린트에서 작성했던거를 다시 보자면 
+
+app.use(cors({
+  origin : 'https://localhost:3000',       // string 타입으로 어떠한 웹주소를 주게되면 해당 주소에서 전해오는 요청들에 대해서만 허용하겠다라는 의미이다.
+  methods : ['GET', 'POST', 'OPTIONS'],    // 배열안에 허용할 메소드들을 string타입으로 주게되면 해당 메소드의 요청들만 허용하겠다는 의미이다.
+  credentials : true                       // (boolean값으로 true나 false로 줄 수 있고,true로 설정했을땐 Access-Control-Allow-Credentials를 true로 설정하게 된다.)
+}));
+
+개인적으로는 cors설정 중 credentials부분이 가장 이해가 잘 되지 않았다. 보안 관련 이라고만 대충 이해하고 있었는데 검색해보니 조금 더 자세히 설명된걸 찾을 수 있었다.
+
+우선 위에서 설명해줬듯 cors는 다른 origin에 대한 요청을 허용하는 정책이다.
+같은 origin에서 http 통신을 하는 경우엔 우리가 따로 신경쓰지 않아도 알아서 cookie가 request header에 들어가게 되는데 origin이 다른 http통신에서는 request header에 쿠키가 자동으로 들어가지 않는다.
+만약 request header에 쿠키가 없으면 서버는 클라이언트(내가) 누군지 모르게 되기때문에 우리가 직접 설정을 해줘서 request header에 쿠키가 들어가도록 만들어줘야 한다.
+
+쿠키를 요청에 포함하고 싶으면 2가지 작업을 해야한다.
+첫째, 프론트 부분에 withCredentials를 true로 해줘야하고
+둘째, 서버부분에 Access-Control-Allow-Credentials를 true로 해줘야 한다.
+
+위에 cors설정에서 credentials: true로 해준게 곧 Access-Control-Allow-Credentials: true를 의미하게 되고(둘째부분)
+
+스프린트의 client-session에서 src/components/Login.js부분에 
+
+axios.post(
+    'https://localhost:4000/users/login', 
+    {
+      userId: this.state.username,
+      password: this.state.password
+    },
+    { 
+      'Content-Type' : 'application/json', 
+      withCredentials: true
+    }
+)
+
+withCredentials: true로 해준 부분이 첫째 부분에 해당한다.
+
+이렇게 서버와 프론트 두 부분 모두에 credential 설정을 해주게 되면 cors요청에 대해서도 request header에 쿠키가 담기게 된다.
+
+
+
+---------------------------------------------------------------------
+
+zoom 시간에 보면서 또 이해 안되던 부분이 있는데 
+
+session({ secret: '@codestates' })
+
+이부분이다. 이걸 어디서 확인할 수 있냐면, 서버 디렉토리의 index.js에서 express-session 라이브러리를 이용해 쿠키 설정을 해주는게 있는데 그곳에서 확인할 수 있다.
+
+app.use(
+  session({
+    secret: '@codestates',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      domain: 'localhost',
+      path: '/',
+      maxAge: 24 * 6 * 60 * 10000,
+      sameSite: 'none',
+      httpOnly: true,
+      secure: true,
+    },
+  })
+);
+
+스프린트에서는 쿠키의 값인 객체 안에 domain, path, sameSite, httpOnly, secure 옵션에 대해서만 설정을 해줬었는데 그보다 조금 더 위를 보면 제일 처음에 secret: '@codestates' 라고 설정된걸 볼 수 있다.
+
+zoom시간에 들은 설명으로는 그 부분이 솔트라고 한다. 
+뭐를위한 솔트냐? connect.sid라는 쿠키값에 sessionId가 들거가게 되는데(connect.sid= sessionId), 근데 그 sessionId가 너무 뻔하면 안되기 때문에 secret으로 해싱을 한다. 
+그게 곧 솔트이다.
+

@@ -1,0 +1,59 @@
+관계형 데이터베이스 사용 시 관계의 종류?
+
+-> 1:1 관계
+-> 1:N (1:다) 관계
+-> N:N (다:다) 관계
+
+1:1 관계?
+
+-> 하나의 레코드가 다른 테이블의 레코드 한 개와 연결된 경우를 의미.
+
+1:N 관계?
+
+-> 하나의 레코드가 서로 다른 여러 개의 레코드와 연결된 경우를 의미.
+
+N:N 관계?
+
+-> 여러 개의 레코드가 다른 테이블의 여러 개의 레코드와 관계가 있는 경우를 의미.
+-> N:N(다대다) 관계를 위해 스키마를 디자인할 때에는, Join 테이블을 만들어 관리한다.
+
+자기참조 관계(Self Referencing Relationship)?
+
+-> user라는 테이블에 userId, name, recommendId 라는 컬럼이 있을때, 한 테이블 안에 있는 recommendId 는 같은 테이블의 userId를 참조한다. 설명하자면 한명의 유저는 한명의 추천인을 가질 수 있다. 그런데 여러명이 한명의 유저를 추천인으로 등록할 수 있기때문에 대충 보기엔 1:N(일대다) 관계와 유사하다고 볼 수 있지만 그렇지 않은게 1:N(일대다)관계는 일반적으로 서로 다른 테이블의 관계를 나타낼때 표현하는 방법이거 위 설명처럼 같은 테이블 내에서 서로 참조를 한다면 그것이 자기참조 관계라고 한다.
+
+
+
+
+
+Tip!!
+⬇️⬇️⬇️⬇️
+
+데이터를 조회하는 select문은 아래의 정해진 순서대로 동작한다.
+
+-> SELECT
+-> FROM
+-> WHERE
+-> GROUP BY
+-> HAVING
+-> ORDER BY
+
+예). 
+    SELECT CustomerId, AVG(Total)
+    FROM invoices
+    WHERE CustomerId >= 10
+    GROUP BY CustomerId
+    HAVING SUM(Total) >= 30
+    ORDER BY 2
+
+
+    -> SELECT CustomerId, AVG(Total): 조회된 결과에서 CustomerId 필드와 Total 필드의 평균값을 구한다.
+
+    -> FROM invoices: invoices 테이블에 접근을 한다.
+
+    -> WHERE CustomerId >= 10: CustomerId 필드가 10 이상인 레코드들을 조회한다.
+
+    -> GROUP BY CustomerId: CustomerId를 기준으로 그룹화한다.
+
+    -> HAVING SUM(Total) >= 30: Total 필드의 총합이 30 이상인 결과들만 필터링한다.
+
+    -> ORDER BY 2: AVG(Total) 필드를 기준으로 오름차순 정렬한 결과를 리턴한다.

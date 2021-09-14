@@ -1,0 +1,130 @@
+<TIL>
+
+Toy 32번
+
+문제
+-> 히스토그램(histogram)은 표(도수 분포표, 빈도표)로 되어 있는 도수 분포(frequency distribution)를 정보 그림으로 나타낸 것입니다. 예를 들어, 대학교의 한 학과에서 신입생들의 현재 거주 지역을 조사한 결과가 다음과 같다고 가정해 봅시다.
+    ㄴ (서울 2명, 경기 1명, 대전 4명, 부산 5명, 대구 1명, 광주 3명, 제주도 3명...)
+이 자료를 히스트그램으로 나타내면 각각 높이 2, 1, 4, 5, 1, 3, 3인 직사각형이 왼쪽부터 그려지게 됩니다. 편의상 직사각형의 너비는 1이라고 가정합니다. 이를 그림으로 나타내면 아래와 같습니다.
+
+            6 |
+            5 |       x
+            4 |     x x
+            3 |     x x   x x
+            2 | x   x x   x x
+            1 | x x x x x x x
+            ------------------
+
+이 히스토그램 내에서 만들 수 있는 가장 큰 직사각형의 면적은 8입니다 (O로 표시한 부분).
+
+            6 |
+            5 |       x
+            4 |     O O
+            3 |     O O   x x
+            2 | x   O O   x x
+            1 | x x O O x x x
+            ------------------
+
+이처럼 임의의 히스토그램 내에서 가장 큰 직사각형의 면적을 리턴해야 합니다.
+
+
+// 위 예시에서 보여준것 처럼, histogram으로 어떠한 배열이 주어졌을때, 그것들을 위 그림으로 나타내보고, 그 안에서 가장 큰 면적을 리턴하면 된다.
+// 가로로 길게 봤을때 면적이 더 큰게 있을 수 있고 세로로 길게 봤을때 더 면적이 큰게 있을 수 있다.
+// 
+
+
+인자 1 : histogram
+-> number 타입을 요소로 갖는 배열
+-> histogram[i]는 100,000 이하의 양의 정수
+-> histogram.length는 100,000 이하
+
+
+출력
+-> number 타입을 리턴해야 합니다.
+
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+let histogram = [2, 1, 4, 5, 1, 3, 3];
+let output = largestRectangularArea(histogram);
+console.log(output); // --> 8
+
+let histogram = [6, 2, 5, 4, 5, 1, 6];
+let output = largestRectangularArea(histogram);
+console.log(output); // --> 12
+/*
+6 | x           x
+5 | x   x   x   x
+4 | x   O O O   x
+3 | x   O O O   x
+2 | x x O O O   x
+1 | x x O O O x x
+------------------
+*/
+
+
+Advanced?
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+-> 임의의 히스토그램에서 가장 큰 직사각형의 넓이를 계산하는 효율적인 알고리즘(O(N * logN))이 존재합니다. 쉽지 않기 때문에 바로 레퍼런스 코드를 보고 이해하는 데 집중하시기 바랍니다.
+
+
+힌트!!!!!!!!!
+⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
+
+-> 문제를 어렵게 만드는 것은 높이를 포기하고 너비를 선택할지, 너비를 포기하고 높이를 선택할지 따져봐야 한다는 것입니다.
+-> 문제를 직접 풀어보고 유심히 관찰하는 것은 문제 해결의 첫 걸음입니다.
+-> 길이 n인 histogram에서 가장 큰 직사각형이 histogram[i]부터 막대 histogram[j]까지라고 가정해봅시다. i와 j는 0 ~ n-1 사이에 놓여 있습니다. (0 <= i <= j <= n-1)
+-> 이 사각형의 높이는 이 구간의 막대 중 가장 낮은 높이를 가진 막대(histogram[k])의 높이와 같습니다.
+-> 이 사각형은 전체 구간(0 ~ n-1) 중 가장 낮은 막대를 포함하고 있거나 그렇지 않은 경우로 나뉩니다.
+-> 전자는 i === 0이고 j === n-1인 경우 뿐입니다.
+-> 후자는 이 직사각형이 차지하는 구간 바깥에 존재합니다. (k < i이거나 j < k)
+-> 이 이후부터는 스스로 생각해보시기 바랍니다.
+-> 구간 트리(segment tree)를 약간 변형하여 해결합니다.
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+const largestRectangularArea = function (histogram) {
+  // TODO: 여기에 코드를 작성합니다.
+  let createMinIdxTree = (arr, ts, te) => {       // 가장 작은 인덱스 트리를 만드는 함수,
+    if(ts === te) return { idx: ts, val: arr[ts] };  // 만약 tree start가 tree end와 동일하다면 객체를 리턴하는데 키로 idx 값으로 tree start, 키로 val, 값으로 배열의 tree start를 할당한다.
+
+    let mid = parseInt((ts + te) / 2);  // tree start와 tree end를 더하고 그 값을 2로 나눈뒤 parseInt를 한 값을 mid에 할당,
+    let left = createMinIdxTree(arr, ts, mid); // 재귀로 함수를 내부에서 다시 사용하는데 배열과 tree start는 그대로 두고 tree end대신 mid(배열의 중간)을 전달해서 값을 찾은 뒤 left에 할당한다.
+    let right = createMinIdxTree(arr, mid + 1, te); // 위와 똑같이 재귀로 함수를 내부에서 다시 사용하는데 이번에는 배열과 tree end는 동일하게 넣고 ts부분을 mid +1(배열의 중간+1)로 대신 넣은뒤 값을 찾아서 right에 할당한다.
+    // 간단하게 말하자면 createMinIdxTree 함수를 이용해 배열의 중간을 기준으로 삼고 그 왼쪽에 있는 요소들을 사용해서 createMinIdxTree함수를 돌린 값을 left에 할당하고, 또 반대로 중간을 기준으로 삼고 그 오른쪽에 있는 요소들을 사용해서 createMinIdxTree함수를 돌린 값을 right에 할당하는것이다.
+
+    return {  // 객체를 리턴시켜주는데, val에 가장 작은 값을 가진 요소를 할당하게 된다. 즉 다시 말하면 애초에 이 createMinIdxTree는 가장 작은 값의 인덱스를 구하기 위한 함수이다.
+      val: Math.min(left.val, right.val),
+      idx: left.val < right.val ? left.idx : right.idx,
+      left,
+      right,
+    };
+  };
+  let tree = createMinIdxTree(histogram, 0, histogram.length - 1); // createMinIdxTree함수를 사용해 인자로 전달되어온 histogram 중 가장 작은 인덱스를 tree에 할당시켜주고, 
+
+  let getMinIdx = (ts, te, rs, re, tree) => {
+    if(rs <= ts && te <= re) return tree.idx;
+    if(te < rs || re < ts) return rs;
+
+    let mid = parseInt((ts + te) / 2);
+    let left = getMinIdx(ts, mid, rs, re, tree.left);
+    let right = getMinIdx(mid + 1, te, rs, re, tree.right);
+    return histogram[left] < histogram[right] ? left : right;
+  };
+
+  let getRangeArea = (start, end) => { // 면적을 구하는 함수이고, 여기에서도 중간을 기준으로 왼쪽, 오른쪽의 면적을 구해서 그중 가장 큰 면적의 값을 리턴한다, 즉 가장 작은 막대를 제외해서 만들 수 있는 가장 큰 직사각형의 넓이를 구한다.
+    if(start > end) return 0;
+    let minIdx = getMinIdx(0, histogram.length - 1, start, end, tree);
+    return Math.max(
+      (end - start + 1) * histogram[minIdx],
+      getRangeArea(start, minIdx - 1),
+      getRangeArea(minIdx + 1, end)
+    );
+  };
+
+  return getRangeArea(0, histogram.length - 1);
+};
