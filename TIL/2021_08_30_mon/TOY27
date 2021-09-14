@@ -1,0 +1,147 @@
+<TIL>
+
+Toy27번
+
+문제
+-> 세로와 가로의 길이가 각각 M, N인 마을지도가 배열로 주어졌을 때, '1'은 주민이 있는 집을 의미하고 '0'은 주민이 없는 땅을 의미합니다. 이 마을은 소문이 시작되면 하루에 상하좌우 한 칸 바로 옆에 있는 집으로 퍼집니다. 특정 주민의 집 (R, C)으로부터 어떤 소문이 시작될 경우, 마을 전체로 소문이 퍼지는데 걸리는 시간(일)을 리턴해야 합니다.
+
+
+인자 1 : village
+-> string 타입을 요소로 갖는 배열
+-> village.length는 M
+-> village[i]는 string 타입
+-> village[i].length는 N
+-> village[i][j]는 세로로 i, 가로로 j인 지점의 정보를 의미
+-> village[i][j]는 '0' 또는 '1'
+
+인자 2: row
+-> number 타입의 0 이상의 정수
+-> 소문이 시작되는 집의 세로 위치
+
+인자 3: col
+-> number 타입의 0 이상의 정수
+-> 소문이 시작되는 집의 가로 위치
+
+
+출력
+-> number 타입을 리턴해야 합니다.
+
+
+주의사항
+-> M, N은 100 이하의 자연수입니다.
+-> row, col에는 항상 주민이 살고 있습니다.
+-> 모든 집은 연결되어 있습니다. 즉, 한 집에서 다른 집으로 가는 경로가 항상 존재합니다.
+-> village를 그래프로 구현하는 함수가 주어집니다.
+
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+let village = 
+    [
+    '0101',
+    '0111',
+    '0110',
+    '0100',
+    ];
+
+let row = 1;
+let col = 2;
+
+let output = gossipProtocol(village, row, col);
+console.log(output); // --> 3
+
+/*
+        1. 시작: (1, 2)에서 시작, 소문이 퍼진 곳을 x로 표기
+            [
+            '0101',
+            '01x1',
+            '0110',
+            '0100',
+            ]
+
+        2. 1일 뒤
+            [
+            '0101',
+            '0xxx',
+            '01x0',
+            '0100',
+            ]
+
+        3. 2일 뒤
+            [
+            '0x0x',
+            '0xxx',
+            '0xx0',
+            '0100',
+            ]
+
+        4. 3일 뒤: 소문이 전부 퍼짐 (끝)
+            [
+            '0x0x',
+            '0xxx',
+            '0xx0',
+            '0x00',
+            ]
+/*
+
+// 대각선으로는 이동 불가, 양옆 혹은 위아래로만 (바로옆집) 이동 가능.
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+const createMatrix = (village) => {
+  const matrix = [];
+  village.forEach((line) => {
+    const row = [];
+    for (let i = 0; i < line.length; i++) row.push(line[i]);
+    matrix.push(row);
+  });
+  return matrix;
+}; // 인자로 전해진 village를 통해 matrix를 만드는 함수.
+
+const gossipProtocol = function (village, row, col) {
+  // TODO: 여기에 코드를 작성합니다.
+  const R = village.length; // R에 village.length를 할당,
+  const C = village[0].length; // L에 village[0].length를 할당,
+  const matrix = createMatrix(village); // matrix에 createMatrix할수를 통해 만든 matrix를 할당,
+  const MOVES = [
+    [-1, 0],
+    [1, 0],
+    [0, 1],
+    [0, -1],
+  ]; // 위, 아래, 오른쪽, 왼쪽, 각 움직임들을 MOVES에 할당해주고,
+
+  const isValid = (row, col) => row >= 0 && row < R && col >= 0 && col < C; // matrix안에 있는지 확인하는 isValid라는 함수를 만들어두고,
+  const queue = []; // queue라는 배열을 만들고,
+
+  const enQueue = (queue, pos) => { // enQueue라는 queue에 인자로 받은 pos를 push해주는 함수를 만들고,
+    queue.push(pos)
+  };
+
+  const deQueue = (queue) => { //deQueue라는 queue에다 shift를 한 pos를 리턴해주는 함수를 만들고(shift를 하게되면 배열의 남아있는 요소를 리턴하는것이 아닌 지운 제일 첫번째 요소를 리턴한다),
+    const pos = queue.shift();
+    return pos;
+  };
+
+  let cnt = 0; // 카운트는 0으로 할당,
+
+  enQueue(queue, [row, col]); // enQueue라는 함수를 통해 queue라는 빈 배열에 [row, col]을 할당해주고(만약 row가 4, col이 2라면, enQueue를 했을때 queue는 [[4, 2]]라는 2차원 배열이 됨),
+  
+  matrix[row][col] = 0; // matrix의 [row, col](시작위치?)를 0으로 할당,
+
+  while (queue.length > 0) { // queue의 길이가 0보다 클때까지만 반복,
+    const [row, col] = deQueue(queue); // [row, col]에 queue.shift()한 값을 할당해주고,
+    cnt = matrix[row][col]; // 카운트를 0으로 하고,
+
+    MOVES.forEach((move) => {  //
+      const nextRow = row + move[0];  // nextRow에 MOVES로 들어온 각 배열을의 0번째 인덱스를 할당,
+      const nextCol = col + move[1];  // nextCol에 MOVES로 들어온 각 배열을의 1번째 인덱스를 할당,
+      if (isValid(nextRow, nextCol) && matrix[nextRow][nextCol] === '1') { // isValid로 nextRow와 nextCol을 넣고 matrix안에 있는지 확인하고, matrix[nextRow][nextCol] 위치 값이 1이라면
+        enQueue(queue, [nextRow, nextCol]); // queue라는 배열에 [nextRow, nextCol]을 할당해주고,
+        matrix[nextRow][nextCol] = matrix[row][col] + 1; // matrix[nextRow][nextCol]의 값을 matrix[row][col] + 1 으로 할당해준다,
+      }
+    });
+  }
+  return cnt; // 결과적으로 카운트를 리턴한다.
+};

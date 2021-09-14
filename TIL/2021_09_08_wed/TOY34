@@ -1,0 +1,97 @@
+<TIL>
+
+Toy 34번
+
+문제
+-> 두 문자열을 입력받아 다음의 조건을 만족하는 LCS*의 길이를 리턴해야 합니다.
+-> LCS: 두 문자열에 공통으로 존재하는 연속되지 않는 부분 문자열(Longest Common Subsequence)
+-> 문자열 'abc'의 subseqeunce는 'a', 'b', 'c', 'ab', 'ac', 'bc', 'abc' 입니다.
+
+
+인자 1 : str1
+-> string 타입의 알파벳 소문자와 숫자로 이루어진 문자열
+-> str1.length는 50 이하
+
+
+인자 2 : str2
+-> string 타입의 알파벳 소문자와 숫자로 이루어진 문자열
+-> str2.length는 50 이하
+
+
+출력
+-> number 타입을 리턴해야 합니다.
+
+
+주의사항
+-> LCS의 길이를 리턴해야 합니다.
+-> LCS가 존재하지 않는 경우, 0을 리턴해야 합니다.
+
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+let output = LCS('abcd', 'aceb');
+console.log(output); // --> 2 ('ab' or 'ac')
+
+output = LCS('acaykp', 'capcak');
+console.log(output); // --> 4 ('acak')
+
+
+Advanced?
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+-> LCS를 계산하는 효율적인 알고리즘(O(M * N))이 존재합니다(두 문자열의 길이가 각각 M, N일 경우). 쉽지 않기 때문에 바로 레퍼런스 코드를 보고 이해하는 데 집중하시기 바랍니다.
+-> LCS의 길이 대신 LCS 자체를 리턴하는 함수를 구현해 보시기 바랍니다.
+-> LIS와 LCS를 변형하여 두 문자열 또는 배열을 입력받아 LCIS(Longest Common Increasing Subsequence)의 길이 또는 그 자체를 리턴하는 함수를 구현해 보시기 바랍니다.
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+const LCS = function (str1, str2) {
+  //TODO: 여기에 코드를 작성합니다.
+  const M = str1.length; // M에 str1의 길이를 할당,
+  const N = str2.length; // N에 str2의 길이를 할당,
+  const memo = []; // memo라는 빈 배열을 선언,
+  for(let i = 0; i < M + 1; i++) memo.push(Array(N + 1).fill(-1)); // memo라는 빈 배열에 memo[m], memo[m][n] 길이 만큼의 -1을 채워넣는다. 
+  // 만약 m=3, n=5라면 아래와같이 된다.
+  /* 
+      [
+        [-1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1],
+        [-1, -1, -1, -1, -1, -1]
+      ]
+  */
+
+  const compareOneByOne = (left, right, len) => { // compareOneByOne이라는 하나씩 비교하는 함수를 만들고,
+    if(memo[left][right] !== -1) return memo[left][right]; // 만약 memo[left][right]가 -1이 아니라면, 그대로 memo[left][right]를 리턴해주고,
+
+    if(left === str1.length || right === str2.length) return 0; // 만약 left가 str1의 길이와 동일하거나, right가 str2의 길이와 동일하면, 0을 리턴해주고,
+
+    if(str1[left] === str2[right]) { // 만약 str1[left]와 str2[right]가 동일하다면,
+      memo[left][right] = 1 + compareOneByOne(left + 1, right + 1); // 재귀로 본 함수를 다시 불러내서 1 + compareOneByOne(left + 1, right + 1)한 값을 memo[left][right]에 할당하고,
+      return memo[left][right]; // memo[left][right]를 리턴해준다.
+    }
+
+    memo[left][right] = Math.max( // compareOneByOne(left + 1, right)의 값과, compareOneByOne(left, right + 1)의 값 중 더 큰 값을 memo[left][right]에 할당해주고,
+      compareOneByOne(left + 1, right), //
+      compareOneByOne(left, right + 1)
+    );
+    return memo[left][right]; // memo[left][right]을 리턴해준다.
+  };
+
+  return compareOneByOne(0, 0, 0); // compareOneByOne(0, 0, 0)한 값을 리턴해준다.
+};
+
+
+
+
+--------------------------------------------------------------------------------------
+
+
+
+
+최장 공통 부분 수열(LCS : Longest Common Subsequence)란?
+
+-> 간단하게 말하면 두 문자열을 비교할 때 공통적으로 나타나는 부분 순서들 중 가장 긴 것이다.

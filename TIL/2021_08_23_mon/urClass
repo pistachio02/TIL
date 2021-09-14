@@ -1,0 +1,72 @@
+- 사용권한?
+
+- 읽기(read) 쓰기(write) 실행(execute) 권한?
+
+- 권한 변경방법?
+
+- 권한 소유자 변경 방법?
+
+- cli환경에서 사용권한을 확인한다거나 폴더인지 파일인지 확인하려면?
+    -> ls -l 입력하면 됨
+    예시 - "drwxr-xr-x  10 jungjonghwa  staff  320  8 23 09:48 Project-Study"
+
+    여기서 제일 처음 d가 뜻하는거는 directory, 즉 폴더라는 뜻. 만약 그냥 - 로 되어있으면 not directory, 즉 파일이라는 뜻.
+    그 다음 rwx, r-x, r-x 로 구분지어봤을때, 처음 3자리는 소유자에게 부여된 권한, 즉 읽고 쓰고 실행을 다 할 수 있다는 뜻,
+    그 다음 3자리는 group으로, 소유자 외 다른 유저이지만 다른 모든 유저를 뜻하는건 아니고 group에 속한 유저들을 의미함, 즉 읽고, 실행할 수 있는 권한만 부여되었다는 뜻.
+    마지막 3자리는 other로, 소유자, 다른 그룹의 유저들을 제외한 모든 기타 유저들을 뜻함, 즉 읽고 실행할 수 있는 권한만 부여되었다는 뜻.
+
+- cli환경에서 파일에 적용된 권한을 변경하려면?
+    -> chmod (change mode를 줄인것) + 권한을 변경할 파일 이름
+
+    명령어 chmod 로 권한을 변경하는 방식은 두 가지가 있다,
+
+    첫 번째는 더하기(+), 빼기(-), 할당(=)과 액세서 유형을 표기해서 변경하는 Symbolic method / 
+    두 번째는 rwx를 3 bit로 해석하여, 숫자 3자리로 권한을 표기해서 변경하는 Absolute form.
+
+    -Symbolic method? 
+
+    Access class	        perator	                Access Type
+
+    u (user)	            + (add access)	        r (read)
+    g (group)	            - (remove access)	    w (write)
+    o (other)	            = (set exact access)	x (execute)
+    a (all: u, g, and o)
+
+    예시
+    ⬇️⬇️
+    "chmod u+r 파일이름" 유저에게 읽기 권한을 부여함
+    "chmod g-w 파일이름" 그룹에게서 쓰기 권한을 뺌
+    "chmod o+x 파일이름" 기타유저에게 실행 권한을 부여함
+
+    혹은
+
+    "chmod u=rwx 파일이름" 유저에게 모든 권한을 부여함
+    "chmod g=rw 파일이름" 그룹에게 읽기와 쓰기 권한만 부여함
+    "chmod o=rx 파일이름" 기타유저에게 읽기와 실행 권한만 부여함
+
+    -Absolute method?
+
+    Permission	    Number
+    Read (r)	    4
+    Write (w)	    2
+    Execute (x)	    1
+
+    #	    Sum	                    rwx	                Permission
+    7	    4(r) + 2(w) + 1(x)	    rwx	                read, write and execute
+    6	    4(r) + 2(w) + 0(-)	    rw-	                read and write
+    5	    4(r) + 0(-) + 1(x)	    r-x	                read and execute
+    4	    4(r) + 0(-) + 0(-)	    r--	                read only
+    3	    0(-) + 2(w) + 1(x)	    -wx	                write and execute
+    2	    0(-) + 2(w) + 0(-)	    -w-	                write only
+    1	    0(-) + 0(-) + 1(x)	    --x	                execute only
+    0	    0(-) + 0(-) + 0(-)	    ---	                none
+
+    예시
+    ⬇️⬇️
+    "chmod 741 파일이름" 유저에게는 모든 권한 부여(7), 그룹에게는 읽기 권한만 부여(4), 기타유저에게는 실행 권한만 부여(1)
+
+
+    환경변수?
+    -> API key와 같이 공개할 수 없는 정보가 코드에 포함될 경우, 네트워크를 통해 API key가 공개될 수 있기때문에 이런 일을 방지하기 위해서는, API key를 PC에 저장해두고 사용해야 한다. JavaScript에서 변수에 문자열을 할당하는 것처럼, API key를 PC에서 사용하는 변수에 할당하고 사용할 수 있다.
+    -> .env 파일에 환경변수를 저장하더라도, js 파일에서 사용하려면 .env 파일에 저장한 내용을 불러오기 위해, dotenv 모듈을 먼저 설치해야한다.
+    

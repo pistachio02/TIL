@@ -1,0 +1,200 @@
+Token(토큰)? Token기반 인증?
+-> 이전에 배웠던 세션기반 인증방식은 서버 혹은 db에 유저정보를 담는 방식으로 요청이 있을때마다 서버나 db에 접속해서 요청에 대한 응답을 해줘도 괜찮은지 세션 아이디가 일치하는지 매번 확인하고 응답을 해줘야 했다. 그런데 이렇게 매 요청마다 db나 서버를 살펴보는것이 불편하고 부담이 많이 가기 때문에 이러한 부담을 어떻게 덜어낼 수 있을것인가를 고민하다 고안된 인증방식이 토큰기반 인증방식이다.
+(즉 서버나 db에 가해지던 부담을 클라이언트에게 부담하게 할 순 없을까? 라는 고민에서 고안된 인증방식이 토큰기반 인증방식이다.)
+
+-> 토큰기반 인증방식은 클라이언트에서 인증 정보를 보관하는 방법으로 보완됨.
+
+-> 클라이언트가 요청시마다 토큰을 보여주고 다양한 기능들을 요청 할 수 있게 되는것이다.
+
+
+
+그럼 그렇게 중요한 토큰을 클라이언트에 저장하는게 위험하지 않아? 괜찮아 그거?
+-> 토큰은 유저정보를 암호화한 상태로 담을 수 있고, 그렇기에 클라이언트에 담을 수 있다.
+
+-> 토큰기반 인증방식에는 마카롱도 있고 여러가지 다양한 인증 방식들이 있는데 그중에서 가장 범용적으로 쓰이는게 jwt이다.
+
+jwt?
+-> json web token으로 json 포맷으로 사용자에 대한 속성을 저장하는 웹 토큰이다.
+
+-> jwt는 아래 예시처럼, .(쩜) 으로 나눠지는 3부분이 존재한다.
+
+    - aaaaa.bbbbb.ccccc
+
+-> 가장 앞쪽에 있는 부분을 header라고 하는데, 이것이 어떤종류의 토큰인지, 어떤 종류의 알고리즘으로 암호화를 할것인지에 대한 정보가 적혀있다. 
+    - 예시. 
+    
+        {
+            "alg": "HS256",
+            "typ": "JWT"
+        }
+
+-> 두번째 부분을 payload라고 하는데, 이곳에는 정보들이 담겨있다. 어떤 정보에 접근이 가능한지에 대한 권한을 담을 수 도 있고, 사용자의 유저정보등, 필요한 데이터들은 이곳에 담아 암호화를 시킨다. 암호화를 하긴 하지만 그래도 민감한 정보는 담지 않는게 좋다.
+    - 예시.
+
+        {
+            "sub": "someInformation",
+            "name": "phillip",
+            "iat": 151623391
+        }
+
+-> 마지막 부분은 signature라고 하는데, 이곳은 base64로 인코딩한 header와 payload의 값에 salt값을 추가해 그들의 조합으로 만든 암호화된 값이 담긴다.
+    - HMAC SHA256 알고리즘(암호화 방법중 하나)을 사용했을때의 예시.
+
+        HMACSHA256(base64UrlEncode(header) + '.' + base64UrlEncode(payload), secret);
+
+
+
+토큰기반 인증절차? 어떻게 이뤄지는지?
+
+-> 클라이언트가 서버에게 id와 비번을 담아서 로그인 요청을 보내고,
+-> 그러면 서버는 id와 비번이 일치하는지 확인하고 클라이언트에게 보낼 암호화될 토큰(jwt토큰), access/refresh 토큰을 모두 생성해서 그것을 클라이언트에게 보내주고,
+-> 클라이언트는 받은 그 토큰을 저장한다. (local storage, cookie, react의 state 등 다양한 공간에 저장할 수 있다.)
+-> 클라이언트가 다음 요청 시 http header에 토큰을 담아서 (Headers: { Authorization: "Bearer JWT_TOKEN"}) 서버에게 요청을 하게 된다.
+-> 그러면 서버는 jwt토큰을 해독해서 아 우리가 발급해준 토큰 맞네 라고 판단이 되면 클라이언트가 보낸 요청을 처리를 하고 그에따른 응답을 보내주게 된다.
+
+
+토큰기반 인증의 장점?
+-> 무상태성을 가지고 확장성을 가질 수 있다.
+    - 서버는 클라이언트에 대한 정보를 저장할 필요 없이 토큰 해독이 되는지만 확인하면 되서 서버나 db의 부담을 덜어줄 수 있다.
+    - 클라이언트는 새로운 요청을 보낼때마다 토큰을 헤더에 포함시키기만 하면 된다.
+    (서버를 여러개 가진 서비스라면 이 토큰 인증 방식이 더더울 빛을 발하게 된다. 각각의 여러개의 서버에서 매번 인증할 필요 없이 한개의 토큰으로 여러개의 서버에서 인증을 받을 수 있기 때문이다.)
+-> 안정성을 가진다.
+    - 암호화한 토큰을 사용하고, 암호화된 키를 노출할 필요가 없기때문에 안전하다.
+-> 토큰은 어디서나 만들 수 있기때문에 좋다.
+    - 토큰을 확인하는 서버가 꼭 그 토큰을 만들지 않아도 된다.
+    - 토큰만 생성해주는 토큰 생성용 서버를 만들어도 되고
+    - 다른 회사에게 토큰 관련 작업을 맡길 수도 있기에 다양하게 활용이 가능하다.
+-> 권한 부여에 용이하다.
+    - 토큰의 payload에다가 어떤 정보에만 접근 가능한지를 정해줄 수 있다.
+    - 예를 들면 db에 저장된 유저의 여러가지 정보중에 유저의 사진과 연락처에만 접근 할 수 있도록 권한을 정해줄 수 있다.
+
+
+jwt토큰의 종류?
+-> 두가지가 있다.
+    - Access Token
+    - Refresh Token
+
+-> 클라이언트가 처음 인증을 받게 될 시(로그인 시) 두가지 토큰을 모두 다 받는다.
+
+Access Token?
+-> Access Token은 실제로 권한을 얻는 데 사용하는 토큰이다. 그렇지만 Refresh Token까지 같이 받는 이유는 만약 Access Token이 탈취당했을 시 문제가 발생하는것을 대비하기 위해, 기본적으로 Access Token에는 비교적 짧은 유효기간을 주고, Refresh Token에는 비교적 긴 유효기간을 줘, Access Token이 탈취 당하게 되었을때 비교적 짧은 유효기간으로 문제가 장기간 이어지는것을 방지하기 위함이다.
+
+Refresh Token?
+-> Refresh Token은 Access Token을 재발급 받기 위한 토큰이다. 위에서 설명한것처럼, 만약 Access Token이 탈취당하게 된다면 혹은 탈취당하지 않더라도 유효기간이 지나 다시 발급받아야 하는 상황이 온다면 이 Refresh Token으로 간단하게 Access Token을 다시 발급받을 수 있다.
+(만약 Refresh Token도 탈취당하게 되면 답이 없다. 그래서 실제로 Refresh Token을 사용하지 않는 서비스도 많이 있지만 세상이 완벽한 보안이 어디 있겠냐, 그냥 탈취당하기 전에 조심하자.)
+
+
+-----------------------------------------------------------------------------------------------------
+
+
+오늘 스프린트 하면서 배웠던것들 중 메모하고 싶은것
+⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
+
+
+
+
+
+
+-> JWT 발급하기
+
+    우선, JWT 토큰을 인증하기위한 비밀 키가 필요하다.
+    .env 파일에 비밀 키를 정의해줘야한다.
+
+    JWT 토큰을 만들때는, jsonwebtoken 모듈을 설치해서 사용한다.
+    이 라이브러리를 사용하여 토큰을 만들때는 아래와 같이 한다.
+
+    /*
+    const jwt = require('jsonwebtoken');
+    const token = jwt.sign({ foo: 'bar' }, 'secret-key', { expiresIn: '7d' }, (err, token) => {
+        if(err) {
+            console.log(err);
+            return;
+        }
+        console.log(token);
+    });
+    */
+
+    첫번째 파라미터는 토큰에 넣을 데이터, 두번째는 비밀 키, 세번째는 옵션, 네번째는 콜백함수가 들어간다.
+
+    (https://backend-intro.vlpt.us/4/01.html) 를 참조했다.
+
+
+
+
+
+
+
+
+-> 응답 시 쿠키 설정하기
+
+    /*
+    res.cookie(name, value [, options])
+    */
+
+    위와같이 res.cookie()로 설정을 해주는데, 첫째에는 이름, 둘째는 넣을 값, 셋째는 옵션을 줄 수 있는데,
+    오늘 했던 스프린트에서 위와같이 응답을 하면서 쿠키에 리프레시 토큰을 넣어서 응답을 줬는데 그렇게 되면
+
+    /*
+    res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "none" })
+    */
+
+    이런식으로 작성 할 수 있다. 첫째인자에 토큰 이름, 둘째인자에 값인 실제 리프레시 토큰을, 셋째로는 옵션을 줬다.
+
+    공식문서를 찾아보면 아래와 같이 간단히 설명되어 있다.
+
+    - Sets cookie name to value. The value parameter may be a string or object converted to JSON.
+
+    그리고 옵션들에 대한 설명도 나와있다.
+
+    Property	.Type	            .Description
+    ............................................
+    domain	    .String	            .Domain name for the cookie. Defaults to the domain name of the app.
+    encode	    .Function	        .A synchronous function used for cookie value encoding. Defaults to encodeURIComponent.
+    expires	    .Date	            .Expiry date of the cookie in GMT. If not specified or set to 0, creates a session cookie.
+    httpOnly	.Boolean	        .Flags the cookie to be accessible only by the web server.
+    maxAge	    .Number	            .Convenient option for setting the expiry time relative to the current time in milliseconds.
+    path	    .String	            .Path for the cookie. Defaults to “/”.
+    secure	    .Boolean	        .Marks the cookie to be used with HTTPS only.
+    signed	    .Boolean	        .Indicates if the cookie should be signed.
+    sameSite	.Boolean or String	.Value of the “SameSite” Set-Cookie attribute. 
+                                    .More information at https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-4.1.1.
+
+
+    (http://expressjs.com/en/api.html#res.cookie) 참조한 공식문서 사이트
+
+
+
+
+
+
+
+-> 쿠키의 sameSite 옵션?
+
+SameSite란 외부 사이트에 쿠키를 전송할 범위를 설정하는 것이다.
+
+이 설정에 대한 옵션값은 3가지가 있다.
+
+1. Strict 
+이름에서 알 수 있듯이 SameSite 규칙이 엄격하게 적용되는 옵션이다. 해당 옵션으로 설정되면 도메인이 다를 경우 쿠키를 서버로 전송하지 않는다.
+
+2. Lax
+GET 요청과 같은 특정한 경우에만 쿠키를 전송한다.
+
+3. None
+웹 사이트(도메인)가 다른 경우에도 쿠키를 전송한다. Chrome 80의 새로운 기능으로 SameSite를 None으로 설정할 경우 쿠키에 암호화된 HTTPS 연결이 필요함을 나타내는 Secure 특성을 태깅해야 한다.
+(즉, 만약 sameSite가 none이면, 동시에 secure가 true여야 한다는 의미이다.)
+
+(https://sevendollars.tistory.com/178) 를 참고했다.
+
+
+
+-----------------------------------------------------------------------------------------------------
+
+토큰 스프린트만 하는데도 배워야 할게 너무 많았다.
+이번이 두번째 하는 스프린트인데도 불구하고..
+
+axios 사용법에 대해 조금 더 알아야 할것같다. (https://axios-http.com/docs/post_example) 이곳을 조금 더 공부해봐야 할듯.
+쿠키 설정도 그렇고, (req, res)에 대해서도,
+또 기본적인 리액트 관련해서도 더 공부해야 할거같다.
+this.state나 class컴포넌트 사용시 헷갈리는게 많았다.
+

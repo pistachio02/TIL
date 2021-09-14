@@ -1,0 +1,146 @@
+<TIL>
+
+Toy 30번
+
+문제
+-> 정수를 요소로 갖는 배열을 입력받아 오름차순으로 정렬하여 리턴해야 합니다.
+
+
+인자 1 : arr
+-> number 타입을 요소로 갖는 배열
+-> arr[i]는 -100,000 이상 100,000 이하의 정수
+-> arr.length는 100,000 이하
+
+
+출력
+-> number 타입을 요소로 갖는 배열을 리턴해야 합니다.
+
+
+주의사항
+-> 힙 정렬을 구현해야 합니다.
+-> arr.sort 사용은 금지됩니다.
+-> 입력으로 주어진 배열은 중첩되지 않은 1차원 배열입니다.
+-> 최소 힙(min heap)을 구현해야 합니다.
+-> 최소 힙 구현을 위해 선언된 함수들(getParentIdx, insert, removeRoot)을 전부 완성해야 합니다.
+-> swap, getParentIdx, insert, removeRoot를 전부 사용해야 합니다.
+-> swap, binaryHeap을 수정하지 않아야 합니다.
+-> 테스트 케이스에서 힙 함수들을 정확히 구현했는지 함께 테스트합니다.
+-> removeRoot의 시간 복잡도는 O(logN)입니다.
+
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+let output = heapSort([5, 4, 3, 2, 1]);
+console.log(output); // --> [1, 2, 3, 4, 5]
+
+output = heapSort([3, 1, 21]);
+console.log(output); // --> [1, 3, 21]
+
+output = heapSort([4, 10, 3, 5, 1]);
+console.log(output); // --> [1, 3, 4, 5, 10]
+
+
+힌트!!!!!!!!!
+⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
+
+-> 앞에서 말했듯이, 최소 힙은 최대 힙과 구현이 거의 일치합니다. 아래 링크를 다시 한번 참고하시기 바랍니다.
+-> 아래와 같은 최소 힙에서 루트 노드의 값(2)은 전체 노드의 값 중에서 가장 작습니다. 루트 노드를 제거한 후에도 최소 힙을 유지해야 하려면 어떤 작업이 필요한 지 고민하시기 바랍니다. 2가 제거된 후의 최소 힙의 루트 노드는 2를 제외한 값 중 가장 작은 값(3)이 되어야 합니다. 아래와 같은 사실로부터 힙 정렬에 대한 아이디어를 얻길 바랍니다.
+    - 루트 노드를 제거하고(가장 작은 값을 제거하고) 다시 최소 힙을 유지하면, 새로운 루트 노드의 값은 그 다음으로 가장 작은 값이다.
+    
+             2
+            / \
+           5   3
+          / \ / \
+         6  8 7  9
+
+// 어제 최대힙 관련 설명했듯이 최대힙과 최소힙은 거의 비슷하다. 다른 점이라고는 최대힙은 부모노드와 자식노드간의 값을 비교했을때 부모 노드가 항상 자식노드보다 값이 커야했기에 비교했던 그 둘의 위치를 바꿔줬는데 이번에는 부모 노드가 항상 자식노드보다 값이 작아야 하기 때문에 이번엔 비교 시 작은 값을 부모 노드로 위치를 바꿔준다. 그것이 최소힙.
+// 이번에 추가적으로 더 해결해야 했던것은 removeRoot로, 루트 노드는 결국 최소힙이 완성되었을때 가장 작은 값을 의미하는데, 그것을 제거했을때 어떻게 다시 가장 작은 값으로 루트 노드를 만드는가 라는것이다.
+// 아래를 보며 이해하자.
+
+위 처럼        2        이렇게 만들어졌을때 removeRoot로 우리가 2를 지워준다 했을때,       9              3             3
+            / \       2의 자리에는 우선 가장 마지막에 배치된 9를 넣는다. 9를 넣고         / \            / \           / \
+           5   3      9의 자식노드인 5와 3을 9와 비교한다. 5와 3 둘다 9보다 작고       5   3    ->    5   9    ->   5   7
+          / \ / \     5보단 3이 작기에 제일 작은 숫자인 3을 9와 위치를 바꿔준다.       / \  / \       / \  / \      / \  / \
+         6  8 7  9    그리고 9와 9의 자식노드인 7을 다시 비교해서 7이 9보다 작으니     6  8 7         6  8 7        6  8 9
+                      9와 7의 위치를 바꿔준다. 그러면 옆에처럼 된다. ->
+
+-> 이런식으로 가장 작은 루트 노드를 계속 지워갈땐, 위에서 했던것처럼 가장 마지막에 배치되었던 노드의 값을 루트에 넣고 계속 비교해가면서 위치를 찾아준다.
+-> 만약 위 예시에서 또 한번 removeRoot를 하게 된다면 우선 루트에 넣고 비교해야하는 값은 가장 마지막에 배치되었던 9가 된다.
+-> 그 다음에 또 removeRoot를 했을땐, 가장 마지막에 배치된 8, 그다음엔 또 가장 마지막에 배치된 값, 이런식으로 계속 하게 된다.
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+// 아래 코드는 수정하지 마세요.
+function swap(idx1, idx2, arr) {
+  [arr[idx1], arr[idx2]] = [arr[idx2], arr[idx1]];
+}
+
+function getParentIdx(idx) {
+  // TODO: 여기에 코드를 작성합니다.
+  return Math.floor((idx - 1) / 2);
+}
+
+function insert(heap, item) {
+  // TODO: 여기에 코드를 작성합니다.
+  heap.push(item);
+  if(heap.length > 1) {
+    let curIdx = heap.length - 1;
+    let pIdx = getParentIdx(curIdx);
+    while(pIdx >= 0 && heap[curIdx] < heap[pIdx]) {
+      swap(curIdx, pIdx, heap);
+      curIdx = pIdx;
+      pIdx = getParentIdx(curIdx);
+    }
+  }
+  return heap;
+}
+
+function removeRoot(heap) {
+  // TODO: 여기에 코드를 작성합니다.
+  swap(0, heap.length - 1, heap);
+  heap.pop();
+
+  if(heap.length === 0) return [];
+
+  let curIdx;
+  let minIdx = 0;
+  while(curIdx !== minIdx) {
+    curIdx = minIdx;
+    let left = curIdx * 2 + 1;
+    let right = curIdx * 2 + 2;
+    if(left < heap.length && heap[left] < heap[minIdx]) {
+      minIdx = left;
+    }
+
+    if(right < heap.length && heap[right] < heap[minIdx]) {
+      minIdx = right;
+    }
+
+    swap(curIdx, minIdx, heap);
+  }
+
+  return heap;
+}
+
+// 아래 코드는 수정하지 마세요.
+const binaryHeap = function (arr) {
+  return arr.reduce((heap, item) => {
+    return insert(heap, item);
+  }, []);
+};
+
+const heapSort = function (arr) {
+  let minHeap = binaryHeap(arr);
+  // TODO: 여기에 코드를 작성합니다.
+  let sort = [];
+  while(minHeap.length > 0) {
+    sort.push(minHeap[0]);
+    minHeap = removeRoot(minHeap);
+  }
+
+  return sort;
+  
+};

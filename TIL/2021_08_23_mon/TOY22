@@ -1,0 +1,70 @@
+<TIL>
+
+Toy22번
+
+문제
+-> 2차원 N x N 배열을 시계 방향으로 90도 회전시킨 배열을 리턴해야 합니다.
+
+인자 1 : matrix
+-> 가로 길이(matrix[i].length)와 세로 길이(matrix.length)가 모두 N인 2차원 배열
+-> matrix[i][j]는 number 타입
+
+인자 2 : k
+-> k는 number타입
+(몇번 회전을 시킬건지를 나타냄)
+(원래는 없었으나 advanced를 위해 직접 입력)
+
+출력
+-> 2차원 배열을 리턴해야 합니다.
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+const matrix = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9, 10, 11, 12],
+  [13, 14, 15, 16],
+];
+
+// 위 matrix라는 2차원 배열이 있고,
+
+console.log(matrix[0][0]); // --> 1
+console.log(matrix[3][2]); // --> 15
+
+// 아무것도 하지 않은 matrix 그대로의 상태에다가 위 콘솔을 찍었을때 나오는 값들,
+
+const rotatedMatrix = rotateMatrix(matrix);
+console.log(rotatedMatrix[0][0]); // --> 13
+console.log(rotatedMatrix[3][2]); // --> 8
+
+// rotatedMatrix라는 함수에 matrix를 인자로 전달해서 시계방향으로 90도 돌린 후,
+// 다시 위의 콘솔을 찍어봤을때 나오는 변경된 값들이 되어야 함.
+
+
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+const rotateMatrix = function (matrix, k=1) {
+  // TODO: 여기에 코드를 작성합니다.
+  if(matrix.length === 0) return matrix; // matrix라는 배열의 길이가 0이면 비어있단 말, 그럴땐 그냥 빈 배열 자체를 리턴.
+  
+  for(let i = 0; i < k; i++){ // rotateMatrix라는 함수의 인자로 몇번 로테이트 할건지 (k=1)값이 전달된다면 그만큼을
+    matrix = rotate(matrix);  // for반복문을 통해 실행하고, matrix에 재 할당을 시켜서,
+  }
+  return matrix; // 리턴시킨다.
+};
+
+let rotate = (matrix) => { // rotate이라는 함수에 matrix를 인자로 받고,
+  let result = [];  // 리턴시킬 result(배열) 먼저 선언시키고,
+  for(let i = 0; i < matrix[0].length; i++) {  // for반복문으로 i는 matrix의 j번째 배열의 0번째 인덱스의 값부터 matrix의 j번째 배열의 모든 인덱스의 값을 가져오게 하고,
+    let array = []; // 그 가져온 값들을 담을 array(배열)을 선언해둔뒤,
+    for(let j = matrix.length-1; j >= 0; j--){ // 다시 for반복문으로 matrix의 몇번째 배열의 i번째 인덱스의 값부터 가져올지 정해주고(여기선 j를 입출력예시의 matrix라고 한다면 matrix의 3번째 인덱스의 배열의 값부터 가져오게 함)
+      array.push(matrix[j][i]) // 가져온 값들을 아까 선언해둔 array(배열)에 담아주고,
+    };
+    result.push(array) // 그 담아준 array(배열)을 처음 선언해둔 result(배열)에 다시 한번 담아주고(2차배열이 됨)
+  };
+  return result; // 마지막엔 result(2차배열)를 리턴시킨다.
+};

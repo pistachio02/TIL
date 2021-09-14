@@ -1,0 +1,55 @@
+알고리즘 코플릿 1번
+
+문제
+-> 김코딩과 박해커는 사무실 이사를 위해 짐을 미리 싸 둔 뒤, 짐을 넣을 박스를 사왔다. 박스를 사오고 보니 각 이사짐의 무게는 들쭉날쭉한 반면, 박스는 너무 작아서 한번에 최대 2개의 짐 밖에 넣을 수 없었고 무게 제한도 있었다.
+예를 들어, 짐의 무게가 [70kg, 50kg, 80kg, 50kg]이고 박스의 무게 제한이 100kg이라면 2번째 짐과 4번째 짐은 같이 넣을 수 있지만 1번째 짐과 3번째 짐의 무게의 합은 150kg이므로 박스의 무게 제한을 초과하여 같이 넣을 수 없다.
+박스를 최대한 적게 사용하여 모든 짐을 옮기려고 합니다.
+짐의 무게를 담은 배열 stuff와 박스의 무게 제한 limit가 매개변수로 주어질 때, 모든 짐을 옮기기 위해 필요한 박스 개수의 최소값을 return 하도록 movingStuff 함수를 작성하세요.
+
+인자1:stuff
+-> Number 타입의 40 이상 240 이하의 자연수를 담은 배열
+    ex) [70, 50, 80, 50]
+인자2:limited
+-> Number 타입의 40 이상 240 이하의 자연수
+
+출력
+-> Number 타입을 리턴해야 합니다.
+-> 모든 짐을 옮기기 위해 필요한 박스 개수의 최솟값을 숫자로 반환합니다.
+
+주의사항
+-> 옮겨야 할 짐의 개수는 1개 이상 50,000개 이하입니다.
+-> 박스의 무게 제한은 항상 짐의 무게 중 최대값보다 크게 주어지므로 짐을 나르지 못하는 경우는 없습니다.
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+let output = movingStuff([70, 50, 80, 50], 100);
+console.log(output); // 3
+
+let output = movingStuff([60, 80, 120, 90, 130], 140);
+console.log(output); // 4
+
+// 첫번째 인자 stuff로 40이상 240 이하의 자연수를 담은 배열과, 두번째 인자 limit으로 40이상 240이하의 자연수가 전달되면,
+// limit을 넘지 않는 선에서 가장 적은 박수의 수만을 사용해 짐을 모두 옮겼을때 몇개의 박스를 사용하는지 리턴해야한다.
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+function movingStuff(stuff, limit) {
+  // TODO: 여기에 코드를 작성합니다.
+  let sortedStuff = stuff.sort((a, b) => (a - b)); // sortedStuff에다가 stuff를 오름차순으로 정렬해주고 할당한다.
+  let cnt = 0; // 카운트를 0으로 할당해주고,
+  let left = 0; // sortedStuff의 가장 작은 무게를 사용하기 위해(0번째 인덱스를 사용하기 위해) left에다가 0을 할당해준다.
+  let right = sortedStuff.length -1; // sortedStuff의 가장 큰 무게를 사용하기 위해 right에다가 sortedStuff.length -1을 할당해준다.
+
+  while(left < right) { // left가 right보다 작을때까지만 반복을 하고,
+    if(sortedStuff[left] + sortedStuff[right] <= limit) { // 오름차순으로 정렬된 배열의 left와 right를 합친 값이 limit 보다 같거나 작으면,
+      cnt++; // 카운트를 하나 올리고,
+      left++; // left+1과, 
+      right--; // right+1 을 해주고,
+    } else { // 오름차순으로 정렬된 배열의 left와 right를 합친 값이 limit 보다 크다면
+      right--; // 가장 큰 무게보다 하나 작은 무게를 사용해야 하기때문에 right에다가 -1을 해준다.
+    }
+  }
+  return sortedStuff.length - cnt; // 정렬된 배열의 길이에서, cnt 만큼 빼고 그 값을 리턴한다.
+}

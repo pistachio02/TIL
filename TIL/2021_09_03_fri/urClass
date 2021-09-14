@@ -1,0 +1,79 @@
+< 원래는 오늘 noSql에 대해서 해야했지만, 프로젝트에선 sql을 사용할거라 지난 내용에 이어서 계속 공부를 하기로 했다. >
+
+9월2일 urClass내용에 이어,
+
+Migrate을 통해 model을 기반으로 실제 테이블을 db에 생성한 후,
+만약 다른 컬럼을 추가하고 싶다면?
+-> npx sequelize migration:generate --name add-use-새로만들고싶은컬럼명-column
+(이렇게 다시 migration을 해주면 새로운 migration파일이 생성된다.)
+
+만약 내가 새로운 테이블을 만들고 , 기존에 있던 테이블과 새롭게 만든 테이블을 관계설정(Association)을 해주고싶다면, 위 새롭게 생성된 migration파일에서 fk 설정을 해주면 된다.
+
+기존 스프린트에서 하던걸 예를 들자면 새롭게 생성된 migration파일을 보면 아래와 같다.
+
+/*
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => { // migrate 할때 들어가는것, 
+    // 1. userId 필드를 urls 테이블에 추가해야한다,
+    await queryInterface.addColumn('urls', 'userId', Sequelize.INTEGER)
+    // 2. userId를 FK로 설정해준다 (제약조건)
+    await queryInterface.addConstraint('urls', {
+      fields: ['userId'],
+      type: 'foreign key',
+      name: 'USERID_FOREIGN_KEY', // 이름은 아무렇게나 해도 됨.
+      references: {
+        table: 'users',
+        field: 'id'
+      },
+      onDelete: 'cascade', // 연결된 FK가 지워졌을때 어떻게 할건지 설정해주는것.
+      onUpdate: 'cascade' // 연결된 FK가 변경됬을때 어떻게 할건지 설정해주는것.
+    })
+  },
+
+  down: async (queryInterface, Sequelize) => { // migrate:undo 할때 들어가는것. (down 은 up의 역순이 되어야함)
+    // 1. FK를 없애주고,
+    await queryInterface.removeConstaint('urls', 'USERID_FOREIGN_KEY') // 'USERID===FOREIGN_KEY' 의 이름을 가진 FK를 없애준다.
+    // 2. 필드를 없애준다.
+    await queryInterface.removeConstaint('urls', 'userId') // userId라는 필드를 없애준다.
+    // 위 up의 순서를 반대로 진행해야함.
+  }
+};
+*/
+
+위와같이 fk 설정을 해주고, models/index.js에다가
+
+/*
+const { url, user } = sequelize.models;
+url.belongsTo(user);
+user.hasMany(url);
+*/
+
+를 해준다. 
+
+관계설정 관련 전체적은 흐름을 스프린트를 기반으로 설명하자면 아래와 같다.
+
+urls테이블이 있고, 새롭게 users 테이블을 만들어 그 둘의 관계설정(1:N 관계)을 해주려고 한다면.
+
+우선 urls테이블에 맨위 설명해놓은 새로운 컬럼을 추가하는 명령어로 userId라는 컬럼을 만들고,
+migration/새롭게생긴migration파일 에서 fk관계설정을 위 설명한대로 해주고,
+models/index.js에다가 위 설명한대로 어떤 관계인지(1:N) 관계설정을 해주면 된다.
+
+위 방법대로 models/index.js에서 한꺼번에 관계설정을 해줄 수도 있고,
+아니면 models/url.js 에
+
+static associate(models) {
+    models.url.belongsTo(models.User);
+}
+
+그리고 models/user.js 에
+
+static associate(models) {
+    models.User.hasMany(models.url)
+}
+
+를 해줘도 된다.
+
+그러니까 index.js에 한꺼번에 설정해줘도 되고, 
+각각의 파일에 하나씩 설정해줘도 된다.

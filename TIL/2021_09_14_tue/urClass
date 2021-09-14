@@ -1,0 +1,69 @@
+GIT 고급
+
+브랜치?
+-> 브랜치란 독립적으로 어떤 작업을 진행하기 위한 개념이다.
+
+통합 브랜치 (Integration Branch)?
+-> 배포될 소스 코드가 기록되는 브랜치다.
+-> Github Repository를 생성하게 되면 기본적으로 main 브랜치가 생긴다. (기존 Repository의 경우 master로 되어 있는 곳도 많다.)
+-> 해당 프로젝트의 모든 기능이 정상적으로 작동하는 상태의 소스코드가 담겨 있다.
+
+피처 브랜치 (Feature Branch)
+-> 기능 추가, 버그 수정과 같이 단위 작업을 위한 브랜치다.
+-> 통합 브랜치로부터 만들어내며, 피처 브랜치에서 하나의 작업이 완료가 되면 다시 통합 브랜치에 병합하는 방식으로 진행된다. (토픽 브랜치라고도 한다.)
+
+
+브랜치 명령어 모음?
+
+-> 새로운 브랜치 생성
+    - git branch 새로운 브랜치 이름
+
+-> 새로운 브랜치 생성 후 해당 브랜치로 전환
+    - git switch -c 새로운 브랜치 이름
+    - git checkout -b 새로운 브랜치 이름
+
+-> 브랜치 목록 확인 (로컬만 확인)
+    - git branch
+
+-> 브랜치 목록 확인 (로컬 및 원격 저장소까지 확인)
+    - git branch -a
+
+-> 브랜치 목록과 각 브랜치의 최근 커밋 확인
+    - git branch -v
+
+-> 브랜치 삭제 (이렇게 하면 로컬에서만 지워진다.)
+    - git branch -d 삭제할 브랜치 이름
+    - git branch -D 해당 명령어는 병합하지 않은 브랜치를 강제 삭제하는 방법입니다.
+
+-> 브랜치 삭제 (원격 저장소에 올라가있는 브랜치 삭제)
+    - git push origin --delete 브랜치 이름
+
+-> 브랜치 전환
+    - git switch 브랜치 이름
+    - git checkout 브랜치 이름
+
+-> 브랜치 병합
+    ㄴ master 브랜치로 dev 브랜치를 병합할 때 (master ← dev)
+        - git checkout master
+        - git merge dev
+
+-> 로그에 모든 브랜치를 그래프로 표현
+    - git log --branches --graph --decorate
+
+-> 아직 commit 하지 않은 작업을 스택에 임시로 저장
+    - git stash
+
+
+
+fastforward? merge commit?
+-> 
+
+merge 와 rebase의 차이점?
+->
+
+
+만약 fork해온 레포에 변경사항이 있을 경우 잊지 않고 그 상태를 가져오기 위한 git pull을 해줘야 하는데,
+만약 내가 gitPractice라는 다른 사람의 레포의 dev 브랜치를 포크해왔고, 
+가져온걸로 막 작업하다가 또 다른 사람이 gitPractice 의 dev 레포를 변경했을 경우,
+그 상태를 가져오기 위해선 git pull origin dev 를 해야한다.
+
