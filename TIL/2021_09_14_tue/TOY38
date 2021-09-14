@@ -1,0 +1,124 @@
+<TIL>
+
+Toy 38번
+
+문제
+-> 한 변의 길이가 2의 제곱수인 정사각형의 흑백 이미지가 2차원 배열로 주어집니다. 각 좌표에는 0(백) 또는 1(흑)이 저장되어 있습니다. 이미지에 포함된 데이터가 모두 1이면 '1', 모두 0이면 '0' 한 글자로 압축할 수 있습니다. 그렇지 않은 경우, 이를 대문자 X로 표시하고 전체를 4등분하여 재귀적으로 압축합니다. 4등분한 영역의 순서는 좌측 상단, 우측 상단, 좌측 하단, 우측 하단입니다.
+
+
+인자 1 : image
+-> 배열을 요소로 갖는 배열
+-> image.length, image[i].length는 1,024 이하
+-> image[i]는 number 타입을 요소로 갖는 배열
+-> image[i][j]는 세로로 i, 가로로 j인 지점의 정보를 의미
+-> image[i][j]는 0 또는 1
+
+
+출력
+-> string 타입을 리턴해야 합니다.
+
+
+주의사항
+-> 두 배열의 길이의 합은 1,000,000 이하입니다.
+-> 어떤 배열 arr의 k번째 요소는 arr[k-1]을 의미합니다.
+
+
+입출력 예시
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+let image = [
+  [1, 0, 1, 1],
+  [0, 1, 1, 1],
+  [0, 0, 1, 1],
+  [0, 0, 0, 0],
+];
+let result = decompression(image);
+console.log(result); // --> 'XX100110X1100​'
+
+// 왜 'XX100110X1100​' 가 나오냐? 처음엔 이해하기 어려울 수 있다.
+// 우선 가장 큰 사각형으로 바라봐보자. 
+// 그럼 그 안에 있는 숫자들이 0과 1이 섞여있지? 그럼 일단 설명해준대로 0과1이 섞여있으니 x라고 표시하자.
+// 그리고 x라고 했을때는 그 뒤에 왜 엑스인지 알 수 있게 0과 1이 섞인 숫자들을 좌상, 우상 좌하 우하 순서대로 나열해줘야 하는데,
+// 지금은 한 변의 길이가 4인 사각형이니까 그걸 설명해준대로 4등분해서 봐보자.
+// 좌상이 [1,0]
+        [0,1]
+// 우상이 [1,1]
+        [1,1]
+// 좌하가 [0,0]
+        [0,0]
+// 우하가 [1,1]
+        [0,0]
+// 이렇게 봤을때 처음에 x를 썼고, 그 뒤에 왜 x인지 알 수 있는 숫자가 와야 한다고 했는데 좌상을 보면 또 다시 0과 1이 섞여있으니 다시 x를 써주고,
+// 그럼 또 왜 x인지 설명해줘야 하나 좌상 우상 좌하 우하 순서대로 [1,0] 를 1, 0, 0, 1로 써주자.
+                                                   [0,1]
+// 그럼 일단 좌상만 했을땐 x + x + 1001 즉 xx1001이 되는거다.
+// 그럼 이제 이런식으로 나머지를 해주자.
+// 우상을 보면 길이 2인 사각형 [1,1] 이네? 근데 안에 1만 있으니 1, 1, 1, 1로 안쓰고 설명대로 축약해서 1로 써주자,
+                         [1,1]
+// 그럼 좌상 한거 xx1001 에서 + 1을 해주니 xx10011 이 되네?
+// 나머지를 계속 해보자,
+// 좌하를 보니 [0,0] 네? 그럼 안에 0만 있으니 위에서 한것처럼 0, 0, 0, 0을 쓴는 대신 축약해서 0으로 써주자,
+            [0,0]
+// 좌상, 우상 한거 xx10011 에서 + 0을 해주니 xx100110 이 되네?
+// 계속 나머지를 하자,
+// 마지막으로 우하를 보니 [1,1] 네? 근데 이번엔 0과 1이 섞여 있으니 일단 x를 쓰고 우하의 숫자들을 좌상 우상 좌하 우하 순서대로 1, 1, 0, 0 즉 x1100으로 써주자
+                    [0,0]
+// 그럼 아까 좌상, 우상, 좌하 한거 xx100110 에서 + x1100를 해주니 xx100110x1100 이 되네?
+
+// 더 이상 해줄게 없으니 최종적으로 xx100110x1100 를 리턴해주자.
+
+// 그래서 결론적으론 'XX100110X1100​'가 나온것이다.
+
+
+image = [
+  [0, 0, 0, 0, 1, 1, 0, 0],
+  [0, 0, 0, 0, 1, 1, 0, 0],
+  [0, 0, 0, 0, 1, 1, 1, 0],
+  [0, 0, 0, 0, 1, 1, 1, 0],
+  [1, 1, 1, 1, 0, 0, 0, 0],
+  [1, 1, 1, 1, 0, 0, 0, 0],
+  [1, 1, 1, 1, 1, 0, 1, 1],
+  [1, 1, 1, 1, 0, 1, 1, 1],
+];
+result = decompression(image);
+console.log(result); // --> 'X0X101X10101X00X10011'
+
+// 위 예시도 마찬가지인데 너무 길어서 설명을 pass한다. 이해하기엔 위 1번 예시가 더 짧으니 편할거다.
+
+Advanced?
+⬇️⬇️⬇️⬇️⬇️⬇️
+
+-> decompression과 반대로 정사각형으로 표현된 데이터를 압축한 문자열을 입력받아 원래의 사각형을 리턴하는 함수 compression을 작성해 보세요. 레퍼런스 코드는 따로 제공하지 않습니다.
+
+
+문제 풀이
+⬇️⬇️⬇️⬇️⬇️
+
+const decompression = function (image) {
+  // TODO: 여기에 코드를 작성합니다.
+  let aux = (rs, re, cs, ce, image) => { // 파라미터는 차례대로 y좌표의 시작(Row Start), y좌표의 끝(Row End), x좌표의 시작(Col Start), x좌표의 끝(Col End)를 의미한다.
+
+    if(rs === re) { // rs가 re와 같다면,
+      return String(image[rs][cs]); // String(image[rs][cs])를 리턴한다, image[rs][cs]를 string화 해서 리턴해주는것.
+    }
+
+    let midRow = Math.floor((rs + re) / 2); // midRow에 Math.floor((rs + re) / 2)한 값을 할당, 
+    let midCol = Math.floor((cs + ce) / 2); // midCol에 Math.floor((cs + ce) / 2)한 값을 할당,
+    let leftUpper = aux(rs, midRow, cs, midCol, image); // leftUpper에 aux(rs, midRow, cs, midCol, image)한 값을 할당,
+    let rightUpper = aux(rs, midRow, midCol + 1, ce, image); // rightUpper에 aux(rs, midRow, midCol + 1, ce, image)한 값을 할당,
+    let leftDown = aux(midRow + 1, re, cs, midCol, image); // leftDown에 aux(midRow + 1, re, cs, midCol, image)한 값을 할당,
+    let rightDown = aux(midRow + 1, re, midCol + 1, ce, image); // rightDown에 aux(midRow + 1, re, midCol + 1, ce, image)한 값을 할당하고,
+
+    let result = leftUpper + rightUpper + leftDown + rightDown; // result라는 변수에 leftUpper, rightUpper, leftDown, rightDown를 다 더한 값을 할당해주고,
+
+    if(result === '1111') { // result가 '1111' 이면 
+      return '1'; // '1'을 리턴,
+    } else if(result === '0000') { // result가 '0000'이면
+      return '0'; // '0'을 리턴,
+    } else { // 위 경우들을 제외한 모든 경우라면
+      return 'X' + result; // 'X' + result를 리턴한다.
+    }
+  };
+
+  return aux(0, image.length - 1, 0, image.length - 1, image); // aux(0, image.length - 1, 0, image.length - 1, image)한 값을 리턴해준다.
+};
