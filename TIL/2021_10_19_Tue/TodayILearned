@@ -1,0 +1,37 @@
+bcrypt? 사용법?
+
+우선 npm i bcrypt 로 bcrypt를 설치해준다.
+
+const bcrypt = require('bcrypt') 로 bcrypt를 가져온다.
+
+password = "12345abcde" 라고 했을때 
+
+const hashed = bcrypt.hashSync(password, 10) 혹은
+
+bcrypt.hash(password, 10, (err, hashed) => {
+    // async callback함수
+}) 를 해준다.
+
+위 두가지 방법 중 첫번째 방법(hash 뒤에 Sync가 붙은 방법)은 동기 방식으로 메서드 기능에 맞게 데이터를 리턴 받게끔 되어있고,
+
+두번째 방법(hash 뒤에 Sync가 붙지 않은 방법)은 비동기 방식으로 콜백을 받아서 처리하게 끔 되어있다.
+
+상황에 맞게 적절히 사용하면 된다.
+
+숫자 10은 salt의 길이를 뜻하는데 주의해야 할 점은 보통은 10개에서 12개 정도로 해준다.
+이유는 그 이상으로 올라가게 되면 속도가 현저히 줄어들기 때문에 엄청나게 오래 걸린다.
+일반적으로는 10개에서 많아야 12개 정도를 추천한다.
+
+이제 이렇게 해시된 비번을 db에 저장하고, 만약 사용자가 로그인 시 우리가 비번을 검사할때는
+
+const result = bcrypt.compareSync("사용자가 로그인 시 입력한 비번", hashed) 혹은
+
+bcrypt.compare("사용자가 로그인 시 입력한 비번", hashed, (err, res) => {
+    // async 방식
+}) 를 하면 된다.
+
+첫번째 방식대로 했을때 result 가 boolean 값으로 true 아니면 false 가 나오기때문에 확인을 할 수 있다.
+
+++++++++++++++++++++++
+
+bcrypt를 사용해서 db에 사용자 비번을 저장하게 되면 훨씬 더 안전하게 민감한 유저정보를 관리할 수 있다.
