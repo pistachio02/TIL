@@ -1,0 +1,131 @@
+++++++++++++++++++++++
+
+    Express.js 를 사용한 기본적인 서버 구축방법 및 mysql & sequelize 를 사용한 데이터베이스 연결 방법에 대해서 적어보자.
+
+++++++++++++++++++++++
+
+    ~~ 서버구축?
+
+        - 서버를 구축할 디렉토리(폴더)를 하나 만들어주고, 터미널에서 그 디렉토리로 들어가 \
+            $ npm init --yes 
+        를 해준다.
+            ㄴ 이렇게 해주면 해당 디렉토리에 package.json이 생성된다.
+        - 터미널의 같은 디렉토리에서 
+            $ npm i express 
+        로 익스프레스를 설치해준다.
+            ㄴ 이렇게 해주면 해당 디렉토리에 package-lock.json 및 node_modules 폴더가 생성된다.
+        - 터미널의 같은 디렉토리에서 
+            $ npm i nodemon --save-dev 
+        로 노드몬을 설치해준다. (노드몬 사용 할 거라면 설치)
+            ㄴ 이렇게 해주면 package.json 의 "devDependencies" 에 노드몬이 추가된다.
+        - package.json 의 "scripts" 에다가 "start": "nodemon app" 을 추가해준다.
+            ㄴ 이렇게 해주면 터미널에서 npm start 했을 시 노드몬으로 해당 app을 실행시켜준다.
+        - 서버를 구축할 디렉토리(동일한 디렉토리)에서 app.js 를 만들어 준다.
+        - 만들어준 app.js 안에다가 이제 코드를 작성할건데, 우선 익스프레스를 사용하기 위해 
+            "const express = require('express');" 
+        를 작성해준다. 그리고 그 다음엔 
+            "const app = express();" 
+        를 작성해주고 그 다음엔 
+            "app.listen(3000);" 
+        을 작성해준다. 이렇게만 해줘도 간단한 서버가 구축된것이다.
+        (npm start 를 해보면 노드몬으로 app.js 를 실행해서 포트 3000번에 서버를 구동시킬 수 있다.)
+
+        - 위 단계를 다 실행한 후 app.js 에 아래와 같이 해주면, 서버 구동 후 해당 포트(3000번 포트)로 접속 시 "HelloWorld" 가 출력되는걸 볼 수 있다.
+            
+            app.get('/', (req, res) => {
+                res.send("HelloWorld");
+            })
+        
+    (조금 더 자세하게 공부해보고 싶다면 Express 공식문서(사이트)에 가보면 좀 더 자세히 알 수 있다.)
+
+++++++++++++++++++++++
+
+    ~~ mysql & sequelize 를 사용한 데이터베이스 연결? (seeder 파일을 통한 임의 데이터를 데이터베이스에 넣기?)
+
+        - mysql.com 으로 가서 mysql 및 mysqlworkbench(다른것을 사용해도 좋다.) 를 다운받아 설치해준다.
+        - 서버가 구축된 디렉토리에서 
+            $ npm i mysql2 
+        를 통해 mysql을 설치해준다.
+            ㄴ 이렇게 해주면 package.json "dependencies" 에 mysql2 가 추가된다.
+        - sequelize.org 로 가서 
+            $ npm install --save sequelize 
+        를 통해 sequelize 를 설치해준다.
+            ㄴ 이렇게 해주면 package.json "dependencies" 에 sequelize 가 추가된다.
+        - https://sequelize.org/master/manual/migrations.html 로 가서 
+            $ npm install sequelize-cli 
+        를 통해 sequelize-cli 를 설치해준다.
+            ㄴ 이렇게 해주면 package.json "dependencies" 에 sequelize-cli 가 추가된다.
+        - 초기 부트스트랩핑을 위해 
+            $ npx sequelize-cli init 
+        을 해준다.
+            ㄴ 이렇게 해주면 서버를 구축한 디렉토리에 config, models, migrations, seeders 라는 폴더가 각각 생긴다.
+        
+        - 사용할 데이터베이스는 mysqlworkbench 를 통해 새로 하나 만들어준다. (나는 우선 serverPrac 으로 데이터베이스를 하나 만들어줬다.)
+        - 서버가 구축된 디렉토리에서 
+            $ npm i dotenv 
+        를 통해 dotenv을 설치해준다.
+            ㄴ 이렇게 해주면 package.json "dependencies" 에 dotenv 가 추가된다.
+        - 서버가 구축된 디렉토리에서 .env 파일을 하나 생성해준다. (환경변수에 관해선 알아서 공부하도록.)
+        - models/index.js 에서 보통 7번째 줄을 보면 const env = process.env.NODE_ENV || 'development' 라고 되어있는데 이것은 process.env.NODE_ENV 가 있으면 그것을 env 에 할당하고, 없으면 config/config.json 에 development 를 사용할거다 라는 얘기이다. 그러므로 .env 파일에다가 NODE_ENV=serverPrac 으로 추가해준다. (이 말은 config/config.json 에 있는 development 가 아닌 우리가 방금 .env 에 추가한 NODE_ENV 가 있으니 그걸 사용해라 라는 말이다.) 
+        - 이제 config/config.json 으로 가서 development 형식과 똑같이 다만 이름을 serverPrac으로 바꿔서 똑같은걸 하나 객체에 새로 만들어 추가해준다. 그리고 config.json 의 이름을 config.js 로 바꾸고 객체의 맨 앞에 module.exports = 를 붙여주고, 가장 위에다가 require('dotenv').config() 를 추가해준다. 
+        - 마지막으로 models/index.js 의 8번줄에 const config = require(__dirname + '/../config/config.json')[env] 를 const config = require(__dirname + '/../config/config.js')[env] 으로 바꿔준다. 
+        - 정말 마지막으로 models/index.js 의 'use strict' 아래쪽에 require('dotenv').config() 를 추가해준다.
+        - 이제 config/config.js 의 serverPrac 을 우리의 데이터베이스와 맞게 설정을 해줘야 하는데 보통 비번같은 중요한 정보들만 해줘도 되지만 기왕 하는거 serverPrac 에 있는 항목들을 다 .env 를 사용해서 설정해주자. (config.js 뿐만 아니라 .env 도 설정해줘야 한다. .env 사용법에 대해서는 알아서 공부하도록)
+        
+        - 위처럼 config 설정이 완료되었으면 
+            $ npx sequelize-cli model:generate --name Users --attributes email:string,password:string,nickname:string 
+        를 사용해서 첫 모델을 만들어볼 수 있다. (해당 명령어는 Users 라는 테이블을 만들고, 해당 테이블에 email, password, nickname 이라는 항목들을 만들어준다.)
+            ㄴ 이렇게 해주면 models 폴더 안에 users.js 가 하나 생긴다.
+            ㄴ 이렇게 해주면 migrations 폴더 안에 우리가 만들어준 users.js 를 기반으로 한 파일이 하나 생긴다.
+        - 이제 
+            $ npx sequelize-cli db:migrate 
+        를 통해 마이그레이션을 해준다.
+            ㄴ 이렇게 해주면 우리가 만든 serverPrac 이라는 데이터베이스 안에 Users 라는 테이블이 하나 생성되고, 그 테이블에는 아까 우리가 설정해놓은 email, password, nickname 이 항목으로 들어가있다. id 및 createdAt, updatedAt 도 생성되어있는데 그것들은 따로 설정해주지 않으면 기본값으로 자동으로 생성된다.
+        
+        - 그리고 
+            $ npx sequelize-cli seed:generate --name demo-user 
+        를 통해 임의의 데이터를 데이터베이스에 넣을 수 있도록 seeders 폴더에 파일을 하나 만들자.
+            ㄴ 이렇게 해주면 seeders 폴더에 파일이 하나 생성된다.
+        - seeders 폴더에 생성된 파일로 가보면 아래와 같이 되어있다.
+            module.exports = {
+                up: async (queryInterface, Sequelize) => {
+                    /**
+                    * Add seed commands here.
+                    *
+                    * Example:
+                    * await queryInterface.bulkInsert('People', [{
+                    *   name: 'John Doe',
+                    *   isBetaMember: false
+                    * }], {});
+                    */
+                },
+
+                down: async (queryInterface, Sequelize) => {
+                    /**
+                    * Add commands to revert seed here.
+                    *
+                    * Example:
+                    * await queryInterface.bulkDelete('People', null, {});
+                    */
+                }
+            }
+        - 위를 보면 up 과 down 이 있는데, 데이터를 넣으려면 up 인 부분에 아래와 같이 작성해주면 된다.
+            await queryInterface.bulkInsert('Users', [{
+                email: 'wiaptm0219@gmail.com',
+                password: '12345',
+                nickname: 'pistachio02',
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }], {})
+        - 위처럼 데이터베이스에 넣을 임의의 데이터를 작성하고 
+            $ npx sequelize-cli db:seed:all 
+        를 통해 데이터베이스에 임의의 데이터를 넣어준다.
+            ㄴ 위처럼 하면 우리가 만든 serverPrac 데이터베이스에 위 임의로 작성한 데이터(유저정보)가 들어가게 된다.
+        
+        - 이렇게 되면 이제 간단하게 서버와 데이터베이스를 연결해준것인데, 사용할때에는 아래와 같이 먼저
+            const { Users } = require('../../models')
+        를 해주고 (데이터베이스에 Users 라는 테이블을 넣었을때의 예시이다) 
+            Users.findOne({ where: { id: 1}})
+        이런 식으로 사용 할 수 있다.
+
+++++++++++++++++++++++
