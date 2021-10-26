@@ -48,7 +48,7 @@
         를 통해 mysql을 설치해준다.
             ㄴ 이렇게 해주면 package.json "dependencies" 에 mysql2 가 추가된다.
         - sequelize.org 로 가서 
-            $ npm install --save sequelize 
+            $ npm install sequelize 
         를 통해 sequelize 를 설치해준다.
             ㄴ 이렇게 해주면 package.json "dependencies" 에 sequelize 가 추가된다.
         - https://sequelize.org/master/manual/migrations.html 로 가서 
@@ -56,7 +56,7 @@
         를 통해 sequelize-cli 를 설치해준다.
             ㄴ 이렇게 해주면 package.json "dependencies" 에 sequelize-cli 가 추가된다.
         - 초기 부트스트랩핑을 위해 
-            $ npx sequelize-cli init 
+            $ npx sequelize-cli init
         을 해준다.
             ㄴ 이렇게 해주면 서버를 구축한 디렉토리에 config, models, migrations, seeders 라는 폴더가 각각 생긴다.
         
@@ -73,17 +73,17 @@
         - 이제 config/config.js 의 serverPrac 을 우리의 데이터베이스와 맞게 설정을 해줘야 하는데 보통 비번같은 중요한 정보들만 해줘도 되지만 기왕 하는거 serverPrac 에 있는 항목들을 다 .env 를 사용해서 설정해주자. (config.js 뿐만 아니라 .env 도 설정해줘야 한다. .env 사용법에 대해서는 알아서 공부하도록)
         
         - 위처럼 config 설정이 완료되었으면 
-            $ npx sequelize-cli model:generate --name Users --attributes email:string,password:string,nickname:string 
+            $ npx sequelize-cli model:generate --name Users --attributes email:string,password:string,nickname:string
         를 사용해서 첫 모델을 만들어볼 수 있다. (해당 명령어는 Users 라는 테이블을 만들고, 해당 테이블에 email, password, nickname 이라는 항목들을 만들어준다.)
             ㄴ 이렇게 해주면 models 폴더 안에 users.js 가 하나 생긴다.
             ㄴ 이렇게 해주면 migrations 폴더 안에 우리가 만들어준 users.js 를 기반으로 한 파일이 하나 생긴다.
         - 이제 
-            $ npx sequelize-cli db:migrate 
+            $ npx sequelize-cli db:migrate
         를 통해 마이그레이션을 해준다.
             ㄴ 이렇게 해주면 우리가 만든 serverPrac 이라는 데이터베이스 안에 Users 라는 테이블이 하나 생성되고, 그 테이블에는 아까 우리가 설정해놓은 email, password, nickname 이 항목으로 들어가있다. id 및 createdAt, updatedAt 도 생성되어있는데 그것들은 따로 설정해주지 않으면 기본값으로 자동으로 생성된다.
         
         - 그리고 
-            $ npx sequelize-cli seed:generate --name demo-user 
+            $ npx sequelize-cli seed:generate --name demo-user
         를 통해 임의의 데이터를 데이터베이스에 넣을 수 있도록 seeders 폴더에 파일을 하나 만들자.
             ㄴ 이렇게 해주면 seeders 폴더에 파일이 하나 생성된다.
         - seeders 폴더에 생성된 파일로 가보면 아래와 같이 되어있다.
