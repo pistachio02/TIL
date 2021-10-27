@@ -11,3 +11,63 @@
         조금 더 시간을 두고 다시 한 번 천천히 공식문서를 읽어본 뒤 시도해봐야겠다.
 
 ++++++++++++++++++++++
+
+    위 이어서 적어보자면, 어제 만났던 401 문제는 알고보니 서버에서 카카오로 토큰 요청 보낼 때
+    카카오에서 필요로 하는 항목들에 대해서 같이 담아서 보내게 되는데
+    그 보내게 되는 항목 이라고 해야할까 요청에 같이 보내는 파라미터의 데이터 형식이 json이 아니라 다른 형식으로 인코딩을 했었어야 했다.
+    간단히 말해서 우리가 클라에서 제일 처음에 authorization_code를 받아올때 그거를 서버로 보내주고 서버에선 그것을 가지고 토큰 요청을 보내게 되는데, 그 요청을 보낼때 authorization_code를 같이 담아 보내줘야하고, 여기서 문제가 발생했다. 다름아닌 이 authorization_code 에 특수문자가 포함되어있다는점! 그래서 그냥 일반적인 방식으로 요청 시 전달하면 안됬었던 것이고, 구글링해서 찾은 아래와 같은 방법으로 데이터 타입을 인코딩해서 보내줬더니 토큰을 잘 받아올 수 있었다.
+
+    우선 아래와 같이
+
+    const formUrlEncoded = x =>
+    Object.keys(x).reduce((p, c) => p + `&${c}=${encodeURIComponent(x[c])}`, '')
+
+    를 만들어 주고, 요청 보낼때 단순하게
+
+    axios
+      .post(
+        'https://kauth.kakao.com/oauth/token',
+        {
+          grant_type: 'authorization_code',
+          client_id: clientID,
+          redirect_uri: 'http://localhost:3000',
+          code: authCode,
+          // client_secret: clientSecret
+        },
+        {
+          headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      )
+
+      이렇게 보내는것이 아닌,
+
+      axios
+      .post(
+        'https://kauth.kakao.com/oauth/token',
+        formUrlEncoded({
+          grant_type: 'authorization_code',
+          client_id: clientID,
+          redirect_uri: 'http://localhost:3000',
+          code: authCode,
+          // client_secret: clientSecret
+        }),
+        {
+          headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }
+      )
+
+      위 만들어준 formUrlEncoded 를 사용해서 보내는 데이터 타입을 인코딩 해주고 보내줘야 정상적으로 토큰을 받아올 수 있다.
+
+      이제 토큰을 잘 받아왔으니 다시 클라로 토큰을 보내주고, 클라에선 전달받은 토큰으로 카카오에 유저정보를 요청해야 하는데 여기서 또 막혔다.
+
+      다름이 아닌 우리 2주차때 외부 api 사용할 때 cors 문제로 요청이나 응답이 차단되는 문제였는데 이번에도 그 문제가 일어났다.
+
+      Access to XMLHttpRequest at 'https://kapi.kakao.com/v2/user/me' from origin 'http://localhost:3000' has been blocked by CORS policy: Response to preflight request doesnt pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+      콘솔에는 이렇게 뜨는데 어떻게 해결해야 할 지 아직 잘 모르겠다.
+
+      
