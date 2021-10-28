@@ -204,7 +204,7 @@ HTTP 주요 헤더?
 -> Authorization: 인증 토큰(e.g. JWT)을 서버로 보낼 때 사용하는 헤더
     - “토큰의 종류(e.g. Basic) + 실제 토큰 문자”를 전송
     - e.g.
-        ㄴ Authorization: Basic YWxhZGRpbjpvcGVuc2VzYW1l
+        ㄴ Authorization: Basic {실제 토큰 문자}
 
 
 
