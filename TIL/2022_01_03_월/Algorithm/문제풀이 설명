@@ -1,0 +1,23 @@
+function solution(nums) {
+    let array = [];
+    for(let i = 0; i < nums.length; i++) {
+        if(array.includes(nums[i]) === false) {
+            array.push(nums[i])
+        }
+    }
+    if(array.length > nums.length / 2) {
+        return nums.length / 2
+    } else {
+        return array.length
+    }
+}
+
+// 우선 array 라는 빈배열을 하나 만들어준다.
+// for 반복문으로 nums에 담긴 숫자들을 하나하나 다 확인하고,
+// 중복되지 않게 종류가 다른 숫자의 번호들을 array에 하나씩 담아줄거다.
+// 즉 만약 nums가 [3,3,3,2,2,4]로 들어오면, array는 [3,2,4]가 되도록 해줄거다.
+// 그렇게 해야 우선 중복되지 않은 종류의 숫자들을 한 배열에 모아줄 수 있고,
+// 그렇게 모아놔야 몇가지 종류의 숫자들이 있는지 array.length 로 알아볼 수 있게 된다.
+// 우리가 nums에서 고를 수 있는 기회는 nums.length / 2 이기때문에
+// 만약 array.length > nums.length/2 라면, 그대로 nums.length/2 를, 즉 선택할 수 있는 총 기회를 리턴해주고,
+// 위와같은 경우가 아니라면 그대로 array.length 를 리턴해주면 된다.
