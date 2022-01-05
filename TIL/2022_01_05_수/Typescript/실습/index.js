@@ -52,3 +52,15 @@ var obj = new Word('kim', 3, 5, 'park');
 console.log(obj);
 console.log(obj.num); //[3,5]
 console.log(obj.str); //['kim', 'park']
+var prod = { brand: 'Samsung', serialNumber: 1360, model: ['TV', 'phone'] };
+console.log(prod);
+var myCart = [{ product: '청소기', price: 7000 }, { product: '삼다수', price: 800 }];
+console.log(myCart);
+var newObj = {
+    plus: function (a, b) {
+        return a + b;
+    },
+    minus: function (a, b) {
+        return a - b;
+    }
+};
