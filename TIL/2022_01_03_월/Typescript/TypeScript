@@ -20,6 +20,65 @@
     ㄴ 다만 웹브라우저는 ts 파일을 알아듣지 못하기 때문에js 파일로 변환 작업을 해야한다.
     ㄴ js 파일로 변환하려면 Terminal 새로열어서 tsc -w 를 입력해주고 터미널 닫지 말고 그대로 두면 ts 파일을 알아서 자동으로 js 파일로 변환해준다.
 
+    전체적으로 정리하자면?
+
+    TS 사용하려면 우선 타입스크립트 컴파일러라는걸 설치해줘야 하는데 아래 방법대로 하면 된다.
+
+        sudo npm install -g typescript
+
+    위 코드를 치면 비번 입력하라고 나오는데 그냥 맥북 로그인 시 사용하는 비번 입력하면 된다.
+    (위 코드는 컴퓨터마다 한 번만 하면 된다.)
+
+    그리고는 TS 사용할 폴더 하나를 만들고 그 폴더 안에 이름은 아무거나 상관 없지만 일단 index.ts 파일을 하나 만들어 준다.
+    그리고는 같은 위치에서 tsconfig.json 이라는 파일 하나를 만들고 그 안에 아래의 코드를 집어넣는다.
+
+    {
+        "compilerOptions": {
+            "target": "ES5",
+            "module": "commonjs",
+            "strictNullChecks": true,
+            /* "string": true 로 해도 위와 동일하다. 간혹 null 타입이 들어올때 엄격하게 체크해달라 라는 의미이다. */
+        }
+    }
+
+    그리고는 아까 만들어준, 위 파일 2개가 들어가 있는 폴더를 터미널에서 열어서 tsc -w 를 해준다.
+    이렇게 하면 같은 이름의 ts 파일을 js 파일로 바꿔준 파일이 하나 생기는데, 이 파일은 어디서 사용할거냐?
+    같은 위치에서 .html 파일을 하나 만들어 주고 그 안에 아래와 같은 코드를 넣어주면 된다.
+
+    <!DOCTYPE html>
+    <html lang="ko">
+        <head>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"/>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+            <title>Hello Javascript</title>
+            
+            <!-- 모바일 웹 페이지 설정 -->
+            <!-- <link rel="shortcut icon" href="img/icon.png" />
+            <link rel="apple-touch-icon" href="img/icon.png" /> -->
+            <!-- 모바일 웹 페이지 설정 끝 -->
+            
+            <!--[if lt IE 9]>
+            <script src="js/html5shiv.js"></script>
+            <![endif]-->
+            
+            <!-- javascript start -->
+            <script type="text/javascript">
+
+            </script>
+            <!-- javascript end -->
+        </head>
+
+        <body>
+            <h1>개발자모드 켜놓고 콘솔 찍어보자 !!</h1>
+            <script src="index.js"></script> 
+        </body>
+    </html>
+
+    위 코드를 자세히 보면 <body> 태그 안에 <script src="index.js"></script> 가 보이는데 아까 설명해줬단 그 변환된 js파일은 여기서 사용하는거다. 같은 위치에 있는 js 파일의 이름을 src 부분에 넣어주면 이제 만들어준 html 파일을 크롬 브라우저에서 열어서 개발자 모드를 켜 콘솔을 찍어보면서 활용할 수 있게 된다.
+
+    제일 처음 만들어준 index.ts 파일 안에다가 TS 코드들을 쭉 작성해보며 테스트 해보면 된다.
+
 ++++++++++++++++++++++
 
     let 이름 :string = "Jung";

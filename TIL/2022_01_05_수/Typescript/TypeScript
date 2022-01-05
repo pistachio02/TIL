@@ -1,5 +1,266 @@
 ++++++++++++++++++++++
 
+    TS 배우기 전 간단하게 class 키워드 알아보기.
+
+    아래와 같은 객체를 만들고 싶다고 가정을 해보자.
+
+    let nunu = {
+        q: "consume",
+        w: "snowball"
+    }
+
+    let garen = {
+        q: "strike",
+        w: "courage"
+    }
+
+    위 두가지 객체를 만들때는 말 그대로 두개밖에 안되니까 이렇게 하드코딩으로 일일이 작성해줄 수 있는데 만약 만들어야 하는 객체가 두개가 아니라 100개 이상 혹은 엄청나게 많은 경우라고 하면 일일이 하드코딩 하기가 어려워진다. 그럴땐 어떻게 해야할까? class 를 사용하면 된다.
+
+    function Character(q, w) {
+        this.q = q,
+        this.w = w
+    }
+
+    위에 보이는 함수처럼 class를 하나 만들어두면 이제 저 character라는 함수는 객체를 만들어내는 기계라고 보면 된다. 
+    그렇다면 어떻게 사용하면 될까?
+
+    let nunu = new Character("consume", "snowball")
+    let garen = new Character("strike", "courage")
+
+    이렇게 사용하면 된다. 그러면 nunu 와 garen 은 이제 제일 처음 하드코딩 했던것처럼 아래처럼 된다.
+
+    let nunu = {
+        q: "consume",
+        w: "snowball"
+    }
+
+    let garen = {
+        q: "strike",
+        w: "courage"
+    }
+
+    근데 이제 위에 설명했던거는 예전 class 문법이 없을때 사용했던 방법으로 요즘에는 es6 문법으로 아래와 같은 방법으로 같은 일을 할 수 있다.
+
+    class NewCharacter {
+        constructor(q, w) {
+            this.q = q,
+            this.w = w
+        }
+    }
+
+    let nunu = new NewCharacter("consume", "snowball")
+    let garen = new NewCharacter("strike", "courage")
+
+    이렇게 해주면 아까도 말 했듯 아래와 같이 된다.
+
+    let nunu = {
+        q: "consume",
+        w: "snowball"
+    }
+
+    let garen = {
+        q: "strike",
+        w: "courage"
+    }
+
+    좀 더 정확하게 보고 싶다면 현재 파일이랑 같이 위치해있는 index.html을 크롬브라우저에서 열어서, 개발자모드를 켠 뒤 콘솔창에 각각 nunu, garen 을 쳐보면 정확하게 잘 찍히는지 확인할 수 있다.
+
+++++++++++++++++++++++
+
+    prototype 에 대해서 간단히 알고 넘어가기.
+
+    prototype은 사람으로 치면 약간 유전자의 역할을 한다.
+    우리가 키가 작고 못생긴 이유는 부모로부터 물려받은 유전자때문이듯,
+    prototype도 그러한 유전자의 역할을 하게 된다.
+
+    조금 전에 설명했던 class를 하나 만들게 되면 prototype은 자동으로 생성되는데 위 예시를 다시 들어보자.
+
+    class NewCharacter {
+        constructor(q, w) {
+            this.q = q,
+            this.w = w
+        }
+    }
+
+    이러한 class를 하나 만들었다고 했을때, 아까 말했듯 prototype은 자동으로 생성되는거라 우리가 개발자모드 켜서 콘솔창에 NewCharacter.prototype 라고 치면 뭔가가 나오는걸 볼 수 있을것이다.
+    이렇게 자동으로 뭔가 만들어졌다면, 그렇다면 거기에 뭔가를 또 추가할 수도 있지 않을까? 맞다, NewCharacter.prototype.difficulty = "Easy" 라고 하고 다시 콘솔창에 NewCharacter.prototype.difficulty 를 쳐보면 "Easy" 라고 나오는것을 확인할 수 있을것이다. 
+
+    근데 또 웃긴점은 콘솔창에 다시 NewCharacter 를 쳐보면 difficulty 라는 항목은 볼 수 없다. 왜그러냐? 아까도 설명했듯 prototype 은 유전자의 역할을 하기 때문에 우리가 prototype 에 뭔가를 더한것은 말 그대로 부모의 유전자에 뭔가를 넣은 것이기 때문에 class 그 자체에 뭔가 추가된것은 아니기 때문이다.
+
+    근데 여기서 또 더 웃긴점은 콘솔창에 nunu.difficulty 를 쳐보면 "Easy" 라고 나오는걸 볼 수 있다. 그 이유는 아까도 설명했지만 prototype에 뭔가를 추가한것은 부모의 유전자에 뭔가를 추가한것이라 부모만 가지고 있는것이고, 자식은 가지고 있지 않아서 그렇다. 그러면 왜 nunu.difficulty 를 쳤을때 "Easy" 가 나오는것이냐? 라고 물을 수 있는데 그 이유는 JS는 nunu를 뒤져서 difficulty를 우선 찾아보는데 만약 nunu한테서 difficulty가 없으면 nunu의 부모를 뒤져본다. nunu의 부모한테서 만약 difficulty가 있는걸 확인하면 그걸 그대로 리턴해주기 때문에 우리가 nunu.difficulty를 쳤을때 부모의 유전자에만 추가한 "Easy"가 나오는 것이다. (잊지 말아야 할 점은, 이렇듯 부모의 부모의 부모의 부모의 부모까지 쭉쭉쭉쭉 부모가 없을때까지 찾아준다.)
+
+    ~~
+
+    JS에서 우리가 배열을 만들때 let array = [1,2,3] 이런식으로 만들어줬었는데 사실 다른 방법으로도 가능하다. let array = new Array(1,2,3) 이렇게도 만들 수 있다. 그렇다면 여기서 보면 알 수 있듯 new 뭐뭐뭐를 하면 class로 만들어준 기계같은걸 가져다 쓴다는거라고 했는데 우리는 Array 라는 class를 만들어준 적이 없는데 어떻게 이게 가능하지? 라고 궁금해할 수 있는데 이는 이미 Array 나 Object 나 그런것들이 미리 만들어져 있어서 그런것이다. 마찬가지의 이유로, .lenght 나 .sort 등등 이러한 것들도 가능한 이유가 미리 만들어져 있어서 그런것이다.
+
+    팁? 뭔가를 해주는 함수를 만들고 싶다면? 예를 들면 인자로 배열과 어떠한 값을 받아서 그 배열안에 그 값이 있다면 그 값을 빼주는 함수를 만들고 싶다? 그러면 일단 그에 맞는 함수를 만들고 그것을 Array.prototype에 추가하면 된다. 그러면 그 이후부터는 prototype에 추가된 그 함수를 어디서든 가져다 쓸 수 있게 된다.
+
+++++++++++++++++++++++
+
+    class 만들때 타입 지정 방법?
+
+    class Person {
+        constructor(a) {
+            this.name = a
+        }
+    };
+
+    let person1 = new Person("Kim");
+    let person2 = new Person("Jung");
+
+    위 방법처럼 만들어 줄 수 있다. 근데 class 만들때 Person 안에다가 대충 변수같은걸 만들어서 넣어줄 수 있다. 필드값이라고 부르는것인데 아래와 같다.
+
+    class Person {
+        data = 0;
+    };
+
+    let person1 = new Person();
+    let person2 = new Person();
+
+    console.log(person1); // 0
+    console.log(person2); // 0
+
+    이렇게 변수를 class 안에 대충 만들어 넣어주게 되면 콘솔창에 찍어봤을때도 잘 확인할 수 있다.
+    그렇다면 변수인데 타입 지정은 어떻게 해주는것일까? 아래와 같다.
+
+    class Person {
+        data :number = 0;
+    };
+
+    근데 보통은 자동으로 해주기 때문에 따로 지정해주지 않아도 된다.
+
+    class Person {
+        constructor(a) {
+            this.name = a
+        }
+    };
+
+    let person1 = new Person("Kim");
+    let person2 = new Person("Jung");
+
+    만약 그냥 위 방법처럼만 해주게 되면 TS에서는 name에 에러가 나게 될것이다. 그렇다면 어떻게 해야할까? 아래와 같다.
+
+    class Person {
+        name :string
+        constructor(a :string) {
+            this.name = a
+        }
+    };
+
+    let person1 = new Person("Kim");
+    let person2 = new Person("Jung");
+
+    이렇게 name 에 대해서도 사용하기 전 미리 만들어주고 타입 설정을 해줘야 에러가 나지 않게 되고, constructor의 인자로 들어오는 a 엘러먼트에 대해서도 마찬가지로 타입 설정을 미리 해줘야 한다. 그렇다면 우리가 늘 함수에 타입 지정할때 리턴값에 대해서도 타입 지정을 해줬어야 했던걸로 기억하는데 이번에는 안해도 되냐? 라고 물어볼 수 있는데 위와같은 경우는 늘 리턴하는 값이 Object 즉 객체이므로 따로 리턴값에 대해 타입 설정을 해주지 않아도 된다.
+
+    위 설명했던것을 다시 좀 더 이해하기 쉽게 설명해주자면, 아래와 같다.
+    우리가 아까 prototype에 뭔가를 추가할 수 있다고 했는데 추가하게 되면 어떠한 모양새냐?
+
+    만약 Person.prototype.func = () => {} 이렇게 func 라는 이름의 함수를 prototype 에 추가하게 되면 결국 그것은, 
+
+    class Person {
+        name :string
+        constructor(a :string) {
+            this.name = a
+        }
+        func = () => {};
+    };
+
+    Person이라는 class 안에 func 라는 함수가 추가된것과도 같다고 보면 이해가 쉽다. 이렇게 되면 아까도 설명했듯 어느곳에서든지 저 class 안의 func 함수를 가져다 사용할 수 있게 되는것이다.
+
+++++++++++++++++++++++
+
+    Interface 키워드?
+
+    우리가 객체에 대한 타입을 지정해줄때 아래와 같이 할 수 있다고 했다.
+
+    type Square = { color : string, width : number };
+    let nemo : Square = { color : "Red", width : 100 };
+
+    그런데 이때 type 키워드 대신 interface 키워드를 아래같이 쓸 수도 있다.
+
+    interface Square { color : string, width : number };
+    let nemo : Square = { color : "Red", width : 100 };
+
+    위를 보면 알겠지만 interface 키워드를 치게되면 = 를 안해주고 그냥 class 만들듯 바로 중괄호 열어주고 만들어도 된다. 그리고 안에 들어가는 내용들 중에 여러가지가 있다면 우리는 중간중간 , 콤마를 써줬었는데 만약 interface 키워드를 쓰게 된다면 ,콤마 대신 난감하다는 땀표시 ; 를 써도 된다.
+
+    자 그러면 왜 type 대신 interface 키워드를 쓰느냐?
+    interface 키워드는 extends 가 가능하기 때문이다.
+    아래 예시를 보면 더 이해하기가 쉽다.
+
+    - type 키워드 사용 시
+
+        type Student = { 
+            name : string 
+        };
+        type Teacher = { 
+            name : string, 
+            age : number 
+        };
+
+        let stud : Student = { name : "kim" };
+        let teac : Teacher = { name : "choi", age : 50 };
+
+    - interface 키워드 사용 시
+
+        interface Student { 
+            name : string 
+        };
+        interface Teacher extends Student { 
+            age : number 
+        };
+
+        let stud : Student = { name : "kim" };
+        let teac : Teacher = { name : "choi", age : 50 };
     
+    위 예시를 보면 알 수 있듯이 interface 키워드를 쓰면 기존에 겹치던 내용인 name을 다시 쓸 필요 없이 Student에 있던 name 을 그대로 extends 해서 가져다 사용할 수 있다.
+
+    type 키워드도 비슷한걸 할 수 있다. 아래를 확인해보자.
+
+        type Dog = { name : string }
+        type Cat = { age : number } & Dog
+
+    Cat 은 name 과 age 가 둘 다 있어야 하므로 type 키워드 사용 시 & 를 써서 두가지 다 만족하는 타입을 만들어준것이다.
+    비슷한걸 하는걸로 보이지만 말 그대로 비슷할 뿐 똑같지는 않다. interface 키워드는 말 그대로 복사해서 가져다 쓰는것이고 type 키워드는 위 설명했듯 써놓은 두가지 모두를 만족하는 타입을 지정하는것이기 때문에 두가지가 서로 조금 다르다.
+
+    팁! interface 키워드도 & 를 사용해서 할 수도 있다.
+
+    중요한점! interface 키워드는 중복 선언이 가능하다.
+    중복 선언이 뭘까? 아래와 같다.
+
+        interface Dog = { name : string }
+        interface Dog = { age : number }
+
+    이렇게 같은 이름의 타입 Dog 로 두번을 각각 다른것을 지정해줬는데 이렇게 해도 에러가 나지 않는다.
+    type 키워드였다면 에러가 났을테지만 interface 키워드는 중복 선언이 가능하기 때문에 에러가 나지 않는다.
+    
+    그렇다면 중복 선언을 하면 어떻게 되는거야? 아래처럼 되는거다.
+
+        interface Dog = { name : string, age : number }
+
+    중복 선언이 되면 아까 위에서 설명했던 extends 가 자동으로 되는거다 라고 볼 수 있다.
+    type 과 interface 의 가장 큰 다른점이 바로 이 점이다.
+
+    그렇다면 interface 는 언제 많이 쓰냐? TS로 작성된 외부 라이브러리들은 보통 interface 키워드가 많이 사용되어있다.
+    왜냐면 보통 그런 라이브러리들은 사람들이 많이 가져다 쓰는데 사람들이 쓰면서 뭔가 불만족스러운 부분이 생겼을때 조금 더 뭔가를 추가하고 싶을때 interface 키워드로 만들어진 타입이라면 그렇게 추가하는거나 하는일들이 매우 쉽게 되기 때문에 그런 외부 라이브러리들은 interface 키워드를 많이 사용한다.
+
+    주의해야 할 점은?
+
+    extends 할 때에 아래와 같이 하면 안된다.
+
+        interface Student { 
+            name : string 
+        };
+        interface Teacher extends Student { 
+            name : number 
+        };
+
+    위 보는것처럼 뭔가를 extends 해서 가져다 쓸때 중복되는것이 있으면 안된다. 에러로 나타내기 때문이다.
+    근데 여기서 또 팁? 아까 말했던 & 기호를 사용하게 되면 안에 들어가는 내용 중 중복이 있더라도 에러가 나지 않는다.
+
+        type Dog = { name : string }
+        type Cat = { name : number } & Dog
+
+    위와같이 하면 에러가 나진 않지만 그것을 사용해서 어떠한 새로운 변수에 할당하게 되면 그때 에러가 나게 된다.
+    고로 interface 키워드를 사용하는게 조금 더 안전하다고 볼 수 있다.
 
 ++++++++++++++++++++++
