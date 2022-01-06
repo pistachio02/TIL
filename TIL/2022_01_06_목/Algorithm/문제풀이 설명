@@ -1,0 +1,40 @@
+++++++++++++++++++++++
+
+    function solution(n, m) {
+    var answer = [];
+    
+    function findGCD(a, b) {
+      if(a === 0) return b;
+      return findGCD(b % a, a);
+    }; // gcd를 찾는 코드
+    
+    let gcd = findGCD(n, m); // 위 지정해준 함수를 활용해 gcd를 찾고,
+    let lcm = (n * m) / gcd; // lcm을 찾는 코드로 lcm을 지정해주고,
+    
+    answer.push(gcd); // gcd를 answer 배열에 추가,
+    answer.push(lcm); // lcm을 answer 배열에 추가
+    
+    return answer; // 최종적으로 리턴해주기.
+    }
+
+++++++++++++++++++++++
+
+    우선 코드스테이츠에서 알고리즘 문제 풀때 GCD 구하는법을 배웠었다. 재귀적으로 푸는 방법이었는데 그냥 외워버렸다. 아래와 같다.
+
+        function findGCD(a, b) {
+        if(a === 0) return b;
+        return findGCD(b % a, a);
+        }
+
+    그리고 또 오늘 공부해보면서 LCM 구하는 방법도 있길래 그냥 외워버렸다. GCD 구하는 방법보다 더 쉬웠다. 아래와 같다.
+
+        let lcm = (n * m) / gcd
+        
+    GCD를 구하고 난 후 그것을 활용해 LCM을 구하는 방법이었다.
+
+    위 문제는 말 그대로 인자로 들어온 두가지 숫자의 최대공약수 와 최소공배수 를 구하는 문제였기에 그저 위의 두가지 방법대로 구하고 난 뒤,
+    각각 배열에 넣어서 리턴해주니 해결할 수 있었다.
+
+    뭔가 방법을 외워서 그대로 풀어버리는게 좀 찝찝하긴 하지만, 어쨌던 저거보다 더 좋은 효율적인 방법을 내가 찾아서 풀 수 없으니 그냥 저 좋은 방법을 그대로 외워서 활용하기로 하자.
+
+++++++++++++++++++++++
