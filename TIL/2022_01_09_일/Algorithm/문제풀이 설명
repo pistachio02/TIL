@@ -1,0 +1,24 @@
+++++++++++++++++++++++
+
+    function solution(array, commands) {
+        var answer = [];
+        for(let i=0; i<commands.length; i++) {
+            let arr1 = array.slice(commands[i][0]-1, commands[i][1])
+            let arr2 = arr1.sort((a, b) => a - b)
+            answer.push(arr2[commands[i][2]-1])
+        }
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    우선 문제가 뭔지 이해를 해야하는데 입출력 예시를 보면 바로 이해가 된다.
+    바로 설명으로 넘어가자면, 위 보이는 그대로이다.
+    우선 반복문으로 array를 잘라내주고,
+    그 잘라낸 array를 arr1에 담아주고,
+    그 arr1을 오름차순으로 정렬시켜 arr2에 담아주고,
+    그 arr2의 몇번째 자리가 어떤 숫자인지 answer에 담아주면 된다.
+    물론 for 반복문으로 commands의 2차원 배열안에 담긴 모든 배열들을 하나하나 해줄때마다.
+    그렇게 하면 answer에 정확한 값이 담기게 된다.
+
+++++++++++++++++++++++
