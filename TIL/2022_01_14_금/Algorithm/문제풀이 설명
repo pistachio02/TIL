@@ -1,5 +1,22 @@
 ++++++++++++++++++++++
 
-    
+    function solution(phone_number) {
+        let arr1 = phone_number.split("").splice(phone_number.length-4, phone_number.length).toString().replace(/,/gi, "");
+        let length = phone_number.split("").splice(0, phone_number.length-4).length;
+        let arr2 = new Array(length).fill("*").toString().replace(/,/gi, "");
+        return arr2 + arr1;
+    }
+
+++++++++++++++++++++++
+
+    우선 인자로 들어온 문자열을 배열로 만들어주고, 그 배열의 값들 중 끝 4자리만 가져와서 그것을 다시 문자열로 만들어준 다음 arr1에 담아준다.
+    끝 4자리는 가져왔으니 이제 그 앞에 있던것들도 가져와야 하니 우선 앞의 것들의 길이를 length에 담아주고,
+    그 길이만큼의 *로 구성된 문자열을 arr2에 담아준다.
+    그리곤 arr2 + arr1 을 해서 리턴해준다.
+
+    더 나은 풀이를 보면 이것 역시 1줄로 풀 수 있었다는걸 걸 볼 수 있다.
+    그치만 아직까지 한줄로 풀기엔 어렵다.
+    나도 정규식 잘 쓰고싶다.
+    후.
 
 ++++++++++++++++++++++
