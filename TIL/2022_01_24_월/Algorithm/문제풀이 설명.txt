@@ -1,0 +1,46 @@
+++++++++++++++++++++++
+
+    function solution(s, n) {
+        let upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let lower = "abcdefghijklmnopqrstuvwxyz";
+        let answer= '';
+
+        for(let i = 0; i < s.length; i++) {
+            let txt = s[i];
+            if(txt === " ") {
+                answer = answer + " "; 
+                continue;
+            }
+            let txtArr = upper.includes(txt) ? upper : lower;
+            let index = txtArr.indexOf(txt)+n;
+            if(index >= txtArr.length) {
+                index = index - txtArr.length;
+            }
+            answer = answer + txtArr[index];
+        }
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    우선 영어 알파벳들을 대문자와 소문자로 각각의 변수에 문자 형식으로 할당해준다.
+    리턴시킬 answer 변수를 빈문자열로 할당해주고,
+    for문을 돌려서 s로 들어온 각각의 알파벳들을 확인해줄건데,
+    만약 그 각각의 알파벳들이 알파벳이 아니라 " " 라면 answer에다 똑같이  " " 를 더해주고,
+    만약 그 각각의 알파벳들이 알파벳이라면, 우선 대문자인지 소문자인지 확인해서 어떤걸 사용해야 할지 확인 먼저 해주고,
+    이제 인덱스에 n으로 들어온 숫자를 더해줘야 하기 때문에 index라는 변수에 할당해주고,
+    만약 그 알파벳이 "Z" 나 "z" 라면 다시 처음으로 돌아가야 하기 때문에 그에 맞는 if조건문을 만들어준 뒤,
+    answer = answer + txtArr[index] 를 해주면 원하는 답을 찾을 수 있다.
+
+    이 문제도 처음엔 각각의 알파벳들을 스플릿해서 배열에 담아주고 그 배열을 for문을 돌려서 확인해주는 식으로 했었는데,
+    뭔가 잘 풀리질 않았다.
+    결국 배열로 해줄 필요 없이 그냥 문자열 형식 그대로 사용하는게 더 정확했고,
+    조건문으로 알파벳 z가 나왔을때 다시 a부터로 돌려보내는 식만 짤 줄 안다면 풀 수 있는 문제였으나,
+    시간상 급하게 빨리 풀어야 했기에 풀다가 중간에 그냥 검색해서 답을 찾아봤었다.
+
+    조금 더 시간을 들여 풀었다면 지금과 비슷하게 풀 수 있었을 것 같은데 많이 아쉽다.
+    그치만 또 하나 배워간 느낌이라 좋다.
+
+    잘 기억하자 오늘 푼 이 문제.
+
+++++++++++++++++++++++

@@ -1,0 +1,50 @@
+++++++++++++++++++++++
+
+    function solution(id_list, report, k) {
+        let userInfo = id_list.reduce((result, current) => { 
+            result[current] = [0, []]; 
+            return result;
+        }, {});
+        
+        for(let value of new Set(report)) { 
+            let [user, target] = value.split(' '); 
+            userInfo[user][1].push(target); 
+            userInfo[target][0]++; 
+        }
+        
+        let stops = id_list.filter((id) => userInfo[id][0] >= k);
+        
+        return id_list.map((id) => 
+            userInfo[id][1].filter((id) => stops.includes(id)).length
+        );
+    }
+
+++++++++++++++++++++++
+
+    카카오에서 낸 문제라 그런지 레벨 1인데도 불구하고 어려웠다.
+    그래서 구글 검색해서 찾아보고 공부했다.
+
+    설명은 입출력 예시 1번을 예를 들어서 하겠다.
+
+    인자로 전달된 
+        id_list = ["muzi", "frodo", "apeach", "neo"]
+        report = ["muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"]
+        k = 2
+    일때의 예를 드는것이다.
+
+    우선 유저인포라는 변수에 {"muzi":[0,[]],"frodo":[0,[]],"apeach":[0,[]],"neo":[0,[]]} 를 담아준다.
+    id_list.reduce 를 통해 id_list의 각각의 값들을 객체의 키로 할당해주고 값은 [0,[]]로 할당해준것이다.
+
+    for문으로 각각의 유저가 몇번을 신고 당했는지, 그리고 누구 누구를 신고했는지 알 수 있도록 userInfo를 업데이트 해줘서 {"muzi":[1,["frodo","neo"]],"frodo":[2,["neo"]],"apeach":[0,["frodo","muzi"]],"neo":[2,[]]} 로 할당해준다.
+    이제 userInfo는 각각의 유저가 몇번 신고당했고, 그리고 자기가 누구를 신고했는지 알 수 있게 된다.
+
+    그리고 stops라는 변수에 신고횟수 조건으로 들어온 k를 활용해 누가 정지 되었는지 알 수 있도록 ["frodo","neo"] 를 할당해준다.
+    여기서는 k가 2 이기 때문에 2번 혹은 그 이상 신고된 유저를 담아주는 배열이 stops가 된다.
+
+    마지막으로 id_list.map을 통해, 자신이 신고한 유저 중 정지된 유저가 총 몇명 있는지 알 수 있는 배열을 리턴해준다.
+    여기서는 [2, 1, 1, 0]가 된다.
+
+    reduce, map, filter, includes 그리고 new Set 까지, 익숙해져야 할것들이 많이 있었다.
+    적어도 이러한 것들에 대해서만이라도 익숙해지고 잘 사용할 수 있게 된다면 알고리즘을 얼마나 더 쉽게 풀 수 있게 될까...
+
+++++++++++++++++++++++

@@ -1,0 +1,23 @@
+++++++++++++++++++++++
+
+    function solution(n) {
+        var answer = 0;
+        let num = Math.sqrt(n)
+        if(Number.isInteger(num)) {
+            num++
+            answer = num * num
+        } else {
+            answer = -1
+        }
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+        n으로 전달되는 숫자를 Math.sqrt(n)를 통해 num에 할당한다.
+        num이 정수인지 실수인지 알아보기 위해 Number.isInteger(num)를 해 정수라면 num + 1을 하고 다시 제곱근을 해 answer에 할당 및 리턴시킨다.
+        실수라면 answer에 -1을 할당, 리턴시킨다.
+
+        기억해야 할것은 Math.sqrt() 와 Number.isInteger()
+
+++++++++++++++++++++++
