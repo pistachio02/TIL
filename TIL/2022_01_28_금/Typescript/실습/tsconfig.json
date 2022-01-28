@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "commonjs",
+        "strictNullChecks": true,
+        /* "string": true 로 해도 위와 동일하다. 간혹 null 타입이 들어올때 엄격하게 체크해달라 라는 의미이다. */
+    }
+}
