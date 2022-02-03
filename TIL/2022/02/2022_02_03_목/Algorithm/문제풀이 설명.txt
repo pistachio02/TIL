@@ -1,0 +1,17 @@
+++++++++++++++++++++++
+
+    function solution(seoul) {
+        var answer = '';
+        let idx = seoul.indexOf("Kim")
+        answer = `김서방은 ${idx}에 있다`
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    idx라는 변수에 "Kim"의 인덱스를 찾아 할당해주고,
+    answer를 위와같은 문장으로 재할당해준 뒤 최종적으로 리턴해준다.
+
+    쉬운 문제였다.
+
+++++++++++++++++++++++
