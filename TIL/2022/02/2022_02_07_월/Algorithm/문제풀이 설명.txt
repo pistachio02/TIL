@@ -1,0 +1,39 @@
+++++++++++++++++++++++
+
+    function solution(s){
+        var answer = true;
+        let newS = s.toUpperCase().split('')
+        let P = 0;
+        let Y = 0;
+        for(let el of newS) {
+            if(el === "P") {
+                P++
+            } else if(el === "Y") {
+                Y++
+            }
+        }
+        
+        if(P !== Y) {
+            answer = false
+        }
+
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    이번에도 하드코딩 식으로 풀어봤다.
+
+    문자열을 모두 대문자로 변환해주고,
+    문자열을 배열로 split해 안에 담긴 값들을 하나하나 다 확인해주는데,
+    만약 P 가 있다면 카운트를 하나 올려주고,
+    마찬가지로 Y 가 있다면 카운트를 하나 올려주는 식으로 해서,
+    개수가 같으면 true를 리턴, 다르면 false를 리턴해줬다.
+
+    아래와 같이 더 쉽게 풀 수 있었다..
+
+    function solution(s){
+        return s.toUpperCase().split("P").length === s.toUpperCase().split("Y").length;
+    }
+
+++++++++++++++++++++++

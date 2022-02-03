@@ -1,0 +1,27 @@
+++++++++++++++++++++++
+
+    function solution(a, b) {
+        var answer = 0;
+        if(a === b) {
+            answer = a
+        } else if(a < b) {
+            for(let i = a; i <= b; i++) {
+                answer = answer + i
+            }
+        } else if(b < a) {
+            for(let i = b; i <= a; i++) {
+                answer = answer + i
+            }
+        }
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    약간 하드코딩 하듯이 풀어봤다.
+
+    a와b가 주어졌을때, 두 값이 같다면 아무거나 리턴시키고,
+    a가b보다 작을땐, a부터 b사이에 있는 모든 숫자를 for문으로 돌려 더해서 리턴해주고,
+    b가a보다 작을땐, b부터 a사이에 있는 모든 숫자를 for문으로 돌려 더해 리턴시켜줬다.
+
+++++++++++++++++++++++
