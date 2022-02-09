@@ -1,0 +1,38 @@
+++++++++++++++++++++++
+
+    function solution(nums) {
+        let len = nums.length, arr = []
+        function isPrime(num) {
+            for(let i = 2; i < num; i++) {
+                if(num % i === 0) {
+                return false;
+                }
+            }
+            return true;
+        }
+        for(let i = 0; i < len - 2; i++) {
+            for(let j = i + 1; j < len - 1; j++) {
+                for(let k = j + 1; k < len; k++) {
+                    if(isPrime(nums[i] + nums[j] + nums[k])) {
+                        arr.push(nums[i] + nums[j] + nums[k])
+                    }
+                }
+            }
+        }
+        return arr.length
+    }
+
+++++++++++++++++++++++
+
+    전체적으로 보면 간단하다.
+    우선 소수인지 여부를 확인해줄 수 있는 함수 isPrime을 만들어두고,
+    for반복문을 3중으로 해 숫자 3개를 더해서 만약 그 수가 소수라면 빈배열에 하나씩 담아주고,
+    for반복문이 끝났을때 최종적으로 빈배열에 몇개의 수가 추가되었는지 확인해서 리턴해주면 되는데,
+    처음엔 for문을 어떻게 사용해야 할지 몰라서 좀 헤맸었다.
+
+    어떻게 보면 엄청 효율적으로 보이진 않지만 그래도 가장 확실하게 하는게 for문을 3중으로 해서 숫자 3개를 더해주는 식인데 그걸 다르게 좀 더 간단하고 효율적으로 풀어보려 했더니 자꾸 틀렸었다.
+
+    아무튼 여기서 기억해야 할점은 소수인지 확인해주는 함수.
+    기억하자 다음에 또 사용할 수 있으니.
+
+++++++++++++++++++++++
