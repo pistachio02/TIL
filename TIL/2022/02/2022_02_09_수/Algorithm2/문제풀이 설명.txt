@@ -1,0 +1,40 @@
+++++++++++++++++++++++
+
+    function solution(s) {
+        let up = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"];
+        let lo = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+        let upp = s.split("").map((x) => {
+            for(let z of up) {
+                if(x === z) {
+                    return x
+                } else {
+                    continue;
+                }
+            }
+        }).filter((x) => x !== undefined).sort()
+        let low = s.split("").map((x) => {
+            for(let z of lo) {
+                if(x === z) {
+                    return x
+                } else {
+                    continue;
+                }
+            }
+        }).filter((x) => x !== undefined).sort()
+        let answer = [...low, ...upp]
+        return answer.reverse().join("");
+    }
+
+++++++++++++++++++++++
+
+    내림차순으로 알파벳들 정렬하기.
+    대문자는 소문자보다 작다고 가정하기.
+
+    우선 문자열을 split으로 배열에 하나씩 담아두기.
+    map을 돌려서 대문자는 따로, 소문자는 따로 빼서 새로운 배열에 담아주기.
+    나뉘어진 2개의 새로운 배열을 각각 sort로 정렬해서 reverse로 내림차순으로 바꿔주고,
+    최종적으로 리턴할 배열에 두개의 배열을 담아서 리턴해주기.
+
+    더 나은 풀이를 보고 현타가 오긴 했지만 어쨌던....
+
+++++++++++++++++++++++
