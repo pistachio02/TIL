@@ -1,0 +1,26 @@
+++++++++++++++++++++++
+
+    function solution(price, money, count) {
+        var answer = 0;
+        let cost = price
+        for(let i = 2; i<=count; i++) {
+            cost = cost + price * i
+        }
+        if(cost > money) {
+            answer = cost - money
+        } else if(money > cost) {
+            answer = 0
+        }
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    반복문으로 1번 탔을때의 가격을 가지고 총 count번 탈때 얼마가 드는지 금액을 cost에 저장해두고,
+    가지고 있는 돈 money보다 cost가 클땐 돈이 얼만큼이 부족한지 리턴해주고,
+    가지고 있는 돈 money보다 cost가 작을땐 그냥 0을 리턴해준다.
+
+    역시나 더 짧고 효율적인 코드는 있겠지만 현재까지는 이게 내가 풀 수 있는 방법이다..
+    공부를 더 해보자..
+
+++++++++++++++++++++++

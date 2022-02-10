@@ -1,0 +1,21 @@
+++++++++++++++++++++++
+
+    function solution(absolutes, signs) {
+        var answer;
+        for(let i = 0; i < signs.length; i++) {
+            if(signs[i] === true) {
+                continue;
+            } else if(signs[i] === false) {
+                absolutes[i] = absolutes[i] * -1
+            }
+        }
+        answer = absolutes.reduce((a, b) => a + b, 0)
+        return answer;
+    }
+
+++++++++++++++++++++++
+
+    signs를 조회해서 true 와 false 인지 여부에 따라 absolutes에 있는 값들을 바꿔주고,
+    최종적으로 absolutes에 있는 값들을 다 더해서 리턴시켜준다.
+
+++++++++++++++++++++++
