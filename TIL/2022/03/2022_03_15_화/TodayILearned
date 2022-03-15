@@ -1,0 +1,56 @@
+++++++++++++++++++++++
+
+    어제에 이어서 몽고DB관련 공부.
+
+    샤딩이란?
+
+    - 단일의 데이터를 다수의 데이터베이스로 쪼개어 나누는것(분할하는것)을 의미한다.
+    - 단일의 데이터베이스에 저장하기 너무 큰 데이터일 때 사용한다.
+    - 데이터를 구간별로 쪼개어 나눔으로써 노드에 무겁게 가지고 있던 데이터를 빠르게 검증할 수 있어 빠른 트랜잭션 속도를 가질 수 있게 된다.
+    - 샤드란 샤딩을 통해 나누어진 블록들의 구간을 샤드라고 하고, 각각의 샤드는 데이터의 복사본이 아니라 데이터 그 자체를 의미한다.
+
+    스케일 아웃이란?
+
+    - 서버를 여러대 추가하여 시스템을 확장하는 방법을 말한다.
+
+++++++++++++++++++++++
+
+    - 어제 몽고DB는 설치해놨다.
+    - mongo 를 터미널에 쳐서 몽고DB를 실행하고,
+    - show dbs 를 쳐서 어떠한 db들이 있는지 확인했고,
+    - 새로운 db를 하나 만들어줄거라 use test 라고 (test 가 새로 만들어줄 db의 이름이다) 쳐서 switched to db test 라는 답을 얻었고,
+    - 그 상태에서 어떠한 값을 db에 넣어줘야 만들려고 했던 db가 정상적으로 생성되고, 값도 잘 넣어지게 된다.
+    - 그래서 db.testingDB.insertOne({testNumber:1}) 라고 해서 testingDB 라는 이름의 collection 안에 .insertOne 메서드를 활용해서 {testNumber:1} 이라는 값을 넣어줬다.
+    - show collections 를 통해 위에서 만들어준 testingDB 라는 collection 이 잘 만들어졌는지 우선 확인했고,
+    - db.testingDB.find() 를 통해 아까 넣어준 값이 잘 들어가 있는지 확인했다.
+    - { "_id" : ObjectId("622fd5e1d850847641eb1093"), "testNumber" : 1 } 라고 나왔고, 여기서 _id는 자동으로 생성된 값이고, 그 뒤 "testNumber" : 1 은 아까 내가 지정해서 넣어준 값이 같이 잘 확인되었다.
+    - 몽고DB를 종료하려면 이전에 늘 했던대로 컨트롤 + c 를 해주면 된다.
+
+++++++++++++++++++++++
+
+    - db.collection.insertOne() = Inserts a single document into a collection.
+    - db.collection.insertMany() = Inserts multiple documents into a collection.
+
+    -
+
+    - db.collection.updateOne() = Updates at most a single document that match a specified filter even though multiple documents may match the specified filter.
+    - db.collection.updateMany() = Update all documents that match a specified filter.
+    - db.collection.replaceOne() = Replaces at most a single document that match a specified filter even though multiple documents may match the specified filter.
+
+    - db.collection.deleteOne() = Delete at most a single document that match a specified filter even though multiple documents may match the specified filter.
+    - db.collection.deleteMany() = Delete all documents that match a specified filter.
+    - db.collection.remove() = Delete a single document or all documents that match a specified filter.
+
+++++++++++++++++++++++
+
+    - db.collection을 만든 다른 방법?
+    ㄴ use "db명"
+    ㄴ db.createCollection("collection명", "넣고싶은 데이터가 있다면 이곳에 작성하고 안해도 되는 옵션이다")
+
+++++++++++++++++++++++
+
+    - db.collection.find() 를 하게되면 전체 데이터를 다 불러오는것이다.
+    - db.collection.find({"찾고싶은특정Key" : "찾고싶은특정Value"}) 를 하게되면 찾고싶은 값만 가져오게 된다.
+    - 보통 위와같이 .find()를 하게되면 등록된 데이터들의 _id값도 같이 리턴되는데, 만약 _id값 없이 나머지 데이터들의 필드만 가져오고싶다면 db.collection.find({"찾고싶은조건"}, {_id : 0}) 을 하면 된다.
+
+++++++++++++++++++++++
