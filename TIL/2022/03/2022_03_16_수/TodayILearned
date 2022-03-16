@@ -1,0 +1,254 @@
+++++++++++++++++++++++
+
+    본격적으로 회 코드를 공부해보자.
+
+++++++++++++++++++++++
+
+    import createError from "http-errors";
+
+    app.use(function (req, res, next) {
+        next(createError(404));
+    });
+
+    이 부분이 뭘 뜻하는것일까?
+
+    - 검색해보니 에러를 처리하기 위한 하나의 방법인것같다.
+    - 그러면 왜 throw new Error()를 사용하지 않고 이렇게 어떻게보면 번거로운 작업인 "http-errors"를 깔고 import를 해오고 그 이후 사용하고 이러한 과정을 거치느냐?
+    - 물론 throw new Error()는 import 없이 바로 사용할 수 있기 때문에 쉽게 사용할 수 있겠지만, 검색해보니 sentry 라는 개념을 알게되면 조금 다르게 생각이 된다고 한다.
+    - 우선 sentry가 뭐냐? Sentry는 어플리케이션에서 오류가 발생하면 알려주는 에러 트래킹 서비스라고 한다. 오류 발생시 메일을 보내주고, 슬랙과 연동하면 슬랙 메시지를 통해 오류 발생과 해당 오류에 대한 정보 파악이 가능하다고 하는데 왜 이 개념이 위 설명한 "http-errors"와 연결되느냐?
+    - Official Sentry SDKs for JavaScript의 경우 HTTP 상태 코드가 5xx이면 에러 리포팅 올리는게 기본값이라고 하면서 throw new Error()로 던진 에러가 전부 sentry에 등록된다고 한다. 이것을 긍정적이지 못하다고 보기때문에 아무래도 단순히 그냥 throw new Error()를 하기보다는 "http-errors"를 깔고 import를 해오고 그렇게해서 사용하는 것 같다.
+    - 위 설명한것을 나는 어떻게 이해했냐면, 아무래도 Sentry라는곳에 에러가 지속적으로 추가되게 된다면 Sentry라는것도 어쨌던 어떠한곳에 에러들을 저장해서 관리하는것이고 그러한 저장소가 계속 늘어나고 크게 된다면 이는 결코 긍정적인것이 아니기 때문에 그렇게 하지 않기 위해서라도 "http-errors"를 사용하는 것 이라고 이해했다.
+
+    - 사용법은 아래와 같다.
+
+        createError([status], [message], [properties])
+
+        ㄴ status: 500 - the status code as a number.
+        ㄴ message - the message of the error, defaulting to nodes text for that status code.
+        ㄴ properties - custom properties to attach to the object.
+
+++++++++++++++++++++++
+
+    
+
+++++++++++++++++++++++
+
+    import * as express from "express";
+
+    왜 import express from "express" 가 아닌 위와같은 방법으로 했을까?
+
+    - 검색해보니 잘 나오지 않았다. 오히려 from 00 import * 에 대한 설명만 많이 있을 뿐.
+    - 추측컨데 from 00 import * 와 import * as 00 from "00" 이 서로 크게 다르지 않을거라고 생각하지만 정확하게는 잘 모르겠다.
+    - 어쨌던 아주 조그만한 실마리를 검색해서 찾아봤을때 이러한 설명이 있었다.
+    
+    - Using import * in python programs is considered a bad habit because this way you are polluting your namespace, the import * statement imports all the functions and classes into your own namespace, which may clash with the functions you define or functions of other libraries that you import. Also it becomes very difficult at some times to say from which library does a particular function came from. The risk of overriding the variables/functions etc always persist with the import * practice.
+
+    - 물론 파이썬에 대한 설명인것같지만 import * 에 대해서 아주 조금이나마 이해할 수 있었던 것 같다.
+
+    - import * 을 하는 방법은 polluting your namespace, 왜냐? the import * statement imports all the functions and classes into your own namespace 이기 떄문이다. 이것에 왜 안좋냐? which may clash with the functions you define or functions of other libraries that you import. 그리고 추가로 it becomes very difficult at some times to say from which library does a particular function came from. 그래서 결론은? The risk of overriding the variables/functions etc always persist with the import * practice.
+
+    - 설명하자면 import * 은 모든 함수들과 클래스들을 나만의 namespace에 다 불러오기 때문에 좋지 않다고 한다. 그럼 왜 그게 안좋냐? 내가 만든 함수들과 다른 라이브러리를 통해 가져와 사용하고 있는 함수들과 충돌이 날 수도 있기 때문이라고 한다. 그렇게 되면 나중에 가서는 어떠한 함수가 있다고 했을 때 그것이 어디에서 온것인지 파악하기 어려워질 수도 있고(import * 에서 온건지, 내가 만든건지, 혹은 다른 라이브러리에서 가져온건지 모름), 그래서 결국엔 코드를 작성해가면서 지속적으로 그러한 충돌의 위험을 감수해가면서 코드를 작성해가야 하기 때문에 부정적으로 본다고 한다.
+
+    - 부정적인것만 얘기해서 그렇지만 반대로 긍정적인 부분도 분명 있을거라고 생각한다. 검색을 잘 못해서인지 내가 잘 몰라서인지 어쨌던 현재는 긍정적인 부분을 모르지만 조금 더 공부해보면 긍정적인 부분도 있을거라고 본다.
+
+++++++++++++++++++++++
+
+    
+
+++++++++++++++++++++++
+
+    import * as path from "path";
+
+    "path" 모듈은 어떤 역할을 할까?
+
+    - 검색해보니 node.js에서 기본으로 제공하는 "path" 모듈은 파일/폴더/디렉토리 등의 경로를 편리하게 설정할 수 있는 기능을 제공한다고 한다.
+    - 개발 시 안전하게 경로를 설정하기 위해서는 "path" 모듈의 join() 이나 resolve() 메서드는 꼭 활용하는 편이라고 한다.
+    - "path" 는 node의 내장 모듈이라서 별도의 설치 없이 바로 추출해서 사용할 수 있다고 한다.
+    - 아래와 같은 사용방법들이 있다고 한다.
+        1. path.sep
+            console.log('path.sep:', path.sep) 
+            // 현 운영체제의 경로 구분자를 확인할 수 있다.
+        2. path.dirname("파일경로.확장자")
+            console.log(path.dirname(__filename)) 
+            // 파일이 위치한 폴더의 경로를 확인할 수 있다.
+        3-1. path.basename("파일경로.확장자")
+            console.log(path.basename(__filename)) 
+            // 파일명.확장자 를 확인할 수 있다.
+        3-2. path.basename("파일경로.확장자", ".확장자")
+            console.log(path.basename(__filename, '.js')) 
+            // 확장자가 제거된 파일 이름을 확인할 수 있다.
+        4. path.extname("파일경로.확장자")
+            console.log(path.extname(__filename)) 
+            // 확장자를 확인할 수 있다.
+        5. path.parse(__filename)
+            console.log(path.parse(__filename)) 
+            // 파일을 root(루트경로), dir(디렉터리경로), base(파일명.확장자), ext(.확장자), name(파일명) 으로 파싱한 객체를 생성할 수 있다.
+        6. path.format(객체)
+            console.log(path.format(path.parse(__filename))) 
+            // 파싱된 파일 경로 객체를 다시 문자열로 합칠 수 있다.
+        7. path.normalize("경로")
+            console.log(path.normalize('/user///hello/////ok/index.js')) 
+            // : //나 \ 등으로 경로 구분자를 잘못 사용해도 알아서 정상 경로로 변환해줄 수 있다.
+        
+        ~~ 아래 두가지를 많이 사용한다고 함 ~~
+
+        8. path.join("경로", "경로", ...)
+            console.log(path.join(__dirname, '/a/b', '..', './b', 'c', '/d')) 
+            // 여러개의 경로를 알아서 합쳐주고, 상위경로(..)나 현재경로(.)로 알아서 처리해줄 수 있다. 또한 중간에 / 를 만나면 앞의 경로에 이어서 상대경로로 처리를 해줄수도 있다.
+        9. path.resolve("경로", "경로", ...)
+            console.log(path.resolve(__dirname, '/a/b', '..', './b', 'c', '/d')) 
+            // 여러개의 경로를 알아서 합쳐주고, 상위경로(..)나 현재경로(.)로 알아서 처리해줄 수 있다. 
+            // 위 설명했던 .join()과의 차이점은 중간에 / 를 만나면 앞의 경로를 다 무시하고, 맨 처음부터 다시 시작한다는것이다.
+
+    - 결론적으로 그렇다면 왜 이렇게 별도의 모듈을 불러와야 할 만큼 경로를 다룰때 조심해야 하는가?
+    - 가장 큰 이유는 아무래도 운영체제별로 경로를 표현?하는 방식이 다르기 때문이라고 볼 수 있다.
+    - 맥이나 윈도우만 비교하더라도 둘이 경로를 표기하는 방식이 서로 다르기 때문에 아무래도 개발을 하는 입장에서는 이러한 서로 다른 경로를 다루기가 조심스러울 수 밖에 없을 것 같다.
+    - 이럴 때를 위해 위 "path" 모듈이 존재하는것이 아닐까? 라는 생각을 해본다.
+
+++++++++++++++++++++++
+
+    
+
+++++++++++++++++++++++
+
+    import * as cookieParser from "cookie-parser";
+
+    "cookie-parser" 모듈이란 무엇인가? 또 어떻게 사용하는가?
+
+    - 검색 시 "cookie-parser" 는 요청에 담긴 쿠키를 쉽게 추출할 수 있도록 해주는 미들웨어라고 설명하고 있다.
+    - request 객체에 cookies 속성이 부여되어 담기게 되면 그것을 쉽게 추출해서 활용할 수 있도록 해주는것 같다.
+    - 사용법은 아래와 같다고 한다.
+
+        const express = require('express')
+        const cookieParser = require('cookie-parser')
+        
+        const app = express()
+        app.use(cookieParser())
+        
+        app.get('/', function(req, res) {
+        console.log('Cookies: ', req.cookies);
+        })
+        
+        app.listen(8080)
+    
+    - 위와같이 "cookie-parser" 를 사용할 수 있다고 한다.
+
+    - 응답에도 쿠키를 아래와 같이 쉽게 담아줄 수 있다고 한다.
+
+        res.cookie(쿠키명, 값, options)
+
+        res.cookie('hasVisited', '1', {
+            maxAge: 60*60*1000,
+            httpOnly: true,
+            path:'/visitors'
+        });
+    
+    - 응답에 쿠키 설정을 쉽게 해주는 것 같다.
+
+    - 쿠키 삭제도 필요 시 쉽게 아래와 같이 해줄 수 있는 것 같다.
+
+        res.clearCookie(쿠키명, options)
+    
+    - 팁으로 응답시 옵션에 쿠키 경로를 지정했다면 삭제시에도 옵션에서 경로를 지정해줘야 한다고 한다. 예시는 아래와 같다.
+
+        res.clearCookie('hasVisited', {path: '/visitors'})
+    
+    - 기존 코드스테이츠에서 했던 프로젝트에서도 "cookie-parser" 를 사용하긴 했지만 그때는 뭔가 정확히 알고 사용한게 아니었는데 이렇게 좀 더 알아보고 나니 더 이해가 잘 되는 것 같다.
+
+++++++++++++++++++++++
+
+    
+
+++++++++++++++++++++++
+
+    import * as logger from "morgan";
+
+    "morgan" 모듈이란 무엇인가?
+
+    - 클라이언트에서 서버로 요청한 메소드들이나 그에 대한 응답으로 어떤 상태코드를 보내주었는지 관련 정보를 보여주는 로그를 남겨주는 모듈이라고 한다.
+    - 옵션으로는 로그를 어떤 방식으로 남겨줄것인지에 대한 설정 파라미터로 가능하다.
+    - 두가지 마라미터를 받는데 아래와 같다.
+        morgan(format, options)
+        ㄴ format은 문자열이나 콜백함수를 넣어야하고,
+        ㄴ 직접 원하는 정보만을 넣어 커스텀 할때는 콜백함수를 넣어 토큰 값을 원하는 것들로 수정하면 되지만 그냥 로그를 찍기 위한 용도라면 문자열을 넣어 적용시키면 된다.
+        ㄴ option은 객체 형식에 값을 넣어 적용해야 한다.
+    
+    실제 본코드에서는 아래와 같이 사용하고 있다.
+
+        app.use(logger('dev'));
+    
+    - 안에 문자열로 "dev" 를 넣었는데 :method :url :status :response-time ms - :res[content-length] 에 대한 정보를 로그로 남길 수 있도록 하는 설정이다.
+    - 그 외에도 안에 들어갈 수 있는 문자열의 다양한 종류는 아래와 같다.
+
+        - combined :
+        :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"
+
+        - common :
+        :remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length
+
+        - dev
+        :method :url :status :response-time ms - :res[content-length]
+
+        - short :
+        :remote-addr :remote-user :method :url HTTP/:http-version :status :res[content-length] - :response-time ms
+
+        - tiny :
+        :method :url :status :res[content-length] - :response-time ms
+
+++++++++++++++++++++++
+
+    require('dotenv').config({ path: path.resolve(process.cwd(), process.env.NODE_ENV === "production" ? '.env.production' : ".env") })
+
+    - dotenv 는 환경 변수를 파일에 저장할 수 있도록 해주는 라이브러리이다.
+    - 사용하려면 우선 npm i dotenv 를 통해 설치를 하고, 위 방법대로 불러와서 사용해주면 된다.
+    - dotenv 라이브러리는 디폴트로 현재 디렉토리에 위치한 .env 파일로부터 환경 변수를 읽어내기 때문에, .env 파일을 새로 만들어 그 안에 등록하고싶은 환경 변수를 만들어주면 된다.
+    - 등록된 환경 변수를 사용하려면 process.env."등록된 환경변수 이름" 으로 사용할 수 있다.
+
+    - process.cwd() 는 현재 작업 디렉토리를 반환하고,
+    - __dirname 는 자바스크립트 소스코드 파일을 포함하는 디렉토리의 이름을 리턴한다.
+    - 위 두가지의 차이점이 있는데 process.cwd() 는 전역 객체의 메소드로 processNode.js 프로세스의 현재 작업 디렉토리 인 문자열 값을 리턴하고, __dirname 는 문자열 값으로 현재 스크립트의 디렉토리 이름을 리턴한다. __dirname은 실제로 전역이 아니라 각 모듈에 대해 로컬이라 두가지의 차이점이 여기에 있다.
+
+    - 위에서 require('dotenv').config()가 아니라 컨피그 안에 설정을 따로 해놨냐면, 보통 환경변수 파일인 .env 파일이 1개라면 상관 없겠지만 개발환경이나 배포환경에 따른 .env파일이 여러개로 따로 많이 작성되어 있다면 위 컨피그에서 설정해둔것처럼 사용하고싶은 .env 파일의 경로를 직접 설정해줘야 한다고 한다.
+    - 현재 있는 회사 코드에도 실제 production시 사용할 환경변수 파일과 개발 시 사용할 환경변수 파일이 따로 있기에 저렇게 컨피그를 통해 때에 따라 사용하고싶은 .env파일의 경로를 따로 설정해준것이다.
+
+++++++++++++++++++++++
+
+
+
+++++++++++++++++++++++
+
+    app.set('views', './src/views');
+    app.set('view engine', 'ejs');
+
+    위 두가지는 어떤 역할을 하는가?
+
+    - app.set(키, 값)으로 app, 즉 express 인스턴스에 변수들을 저장할 수 있다. 라고 나온다.
+    - 저장한 변수들을 반환하고 싶을 때는 app.get(키)로 app.set(키, 값)으로 설정했던 것을 가져올 수 있다. 라고도 나온다.
+
+    - 본 코드에 주석처리된것과 구글검색했을때 나오는 정보들을 모아 추측해봤을때, 아무래도 위 두가지는 Express 에서 HTML을 뷰 엔진으로 사용하려고 할때 하는 설정이라고 보면 될 것 같다.
+    - 실제 본 코드에서도 src에 view 라는 디렉토리가 있고 위 두가지중 한가지는 그 경로를 설정해주고 있고, 설정 시 인자가 키, 값으로 된다는걸 생각했을 때 뷰 엔진 관련 설정을 하는거라고 생각하면 될 것 같다.
+    
+    - 아직 확실하진 않기 때문에, 그리고 더 알아야 하는점이 있기 때문에 조금 더 공부해볼 필요가 있는 것 같다.
+
+++++++++++++++++++++++
+
+
+
+++++++++++++++++++++++
+
+    app.use(express.json());
+
+    위는 어떤 역할을 할까?
+
+    - 위 코드를 이해하려면 우선 bodyParser 라는것에 대해서 먼저 알아야 한다.
+    - 그렇다면 bodyParser 라는건 과연 무엇인가?
+    - Parser 라는것은 가지고 있는 데이터를 내가 원하는 형태의 데이터로 가공하는 과정을 뜻한다. 그리고 그러한 과정을 수행하는 모듈 혹은 메소드를 parser 라 일컫는다. 쉽게 설명하자면 내가 모르는 언어를 내가 원하는 언어의 구조로 바꿔주는 일종의 구문 해석기라고도 말할 수 있겠다.
+    - 하지만 기억해야 하는점은, parser는 말 그대로 구문 해석을 할 뿐 직접적인 번역을 하진 않는다. 번역의 역할은 compiler에서 담당한다.
+
+    - 데이터를 내가 원하는 형식에 맞춰 해석 가능하게 해주는 용도이므로 bodyParser 뿐만 아니라 위에서 설명했던 cookieParser, JSON.parse, JSON.stringify 등 parser의 종류는 셀 수 없이 많이 있다.
+
+    - 구글 번역기에 영어를 적고 한글로 번역을 한다고 했을때, 영어를 입력하는 칸에 설정 언어를 영어로 해주고, 번역되는 칸의 설정 언어를 한국어로 해주는 이러한 일련의 과정이 parse 라고 할 수 있겠고, 이제 번역 버튼을 눌러 실질적으로 번역을 실행하는 과정을 compiler에서 하는 역할이라고 보면 이해가 조금 더 쉬울 것 같다.
+
+    - 그렇다면 bodyParser 는 무엇을 parsing 하는가? 단어 차체에서 이미 알 수 있듯이 req.body를 파싱한다.
+
+++++++++++++++++++++++
